@@ -18,3 +18,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('faq-categories', FaqCategoryController::class)->except(['create', 'show', 'edit']);
     Route::resource('faqs', FaqController::class)->except(['create', 'show', 'edit']);
 });
+
+Route::get('/', [HomeController::class, 'index']);
+Route::get('/products', [ProductController::class, 'index']); // Main thêm ở đây
