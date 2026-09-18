@@ -1093,7 +1093,7 @@
           <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 8px;">
             <div>
               <span class="badge-pill pill-purple">Conditional Breakpoint</span>
-              <p class="card-desc" style="margin-top: 3px; font-size: 0.82rem;">Vòng lặp 1.000 món chỉ có món thứ 789 bị lỗi? Đặt điều kiện <code>$id == 789</code>, Xdebug nhảy thẳng đến lần lặp 789 mà không cần bấm Next 788 lần!</p>
+              <p class="card-desc" style="margin-top: 3px; font-size: 0.82rem;">Bắt lỗi theo ID từ báo cáo của QA (<code>$id == 789</code>) hoặc bắt theo <strong>biểu hiện lỗi</strong> (<code>empty($item->price)</code>) mà không cần đoán trước ID!</p>
             </div>
             <div>
               <span class="badge-pill pill-purple">Call Stack Inspection</span>
@@ -1106,12 +1106,17 @@
           <h3 class="card-heading">Chrome DevTools (Frontend / JS)</h3>
           <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 8px;">
             <div>
-              <span class="badge-pill pill-blue">Replay XHR</span>
-              <p class="card-desc" style="margin-top: 3px; font-size: 0.82rem;">Test form bị lỗi 400? Chuột phải vào request trong Network tab chọn <strong>Replay XHR</strong> để bắn lại ngay mà không cần nhập lại form.</p>
+              <span class="badge-pill pill-blue">Conditional Breakpoint & Pause on Exceptions</span>
+              <p class="card-desc" style="margin-top: 3px; font-size: 0.82rem;">Đặt điều kiện <code>isNaN(item.price)</code> tự phanh đúng món lỗi, hoặc bật <em>Pause on Exceptions</em> để Chrome tự tóm sống dòng crash!</p>
             </div>
             <div>
-              <span class="badge-pill pill-blue">Event Listener Breakpoints</span>
-              <p class="card-desc" style="margin-top: 3px; font-size: 0.82rem;">Không biết nút bấm do file JS nào xử lý? Tích chọn <em>Mouse Click</em>, click vào nút, trình duyệt tự nhảy đến đúng dòng code xử lý!</p>
+              <span class="badge-pill pill-blue">Replay XHR & Event Listeners</span>
+              <p class="card-desc" style="margin-top: 3px; font-size: 0.82rem;">Chuột phải Network chọn <em>Replay XHR</em> bắn lại request không cần gõ lại form. Dùng <em>Mouse Click</em> bắt quả tang code của nút bấm ẩn danh.</p>
+            </div>
+            <div style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(6, 182, 212, 0.3);">
+              <a href="demo_debug_javascript.html" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.4); border-radius: 6px; color: #22d3ee; font-size: 0.8rem; font-weight: 700; text-decoration: none; transition: all 0.2s;">
+                ⚡ Mở Lab Demo Thực Chiến DevTools (demo_debug_javascript.html) ➔
+              </a>
             </div>
           </div>
         </div>
@@ -1249,7 +1254,7 @@
     </div>
 
     <!-- SLIDE 10: Postman & Jira -->
-    <div class="slide" data-slide="10" data-notes="Trường học không dạy nhưng công ty nào cũng bắt dùng: Postman và Jira. Với Postman: Đừng chỉ gõ link rồi bấm Send. Tạo Environments với biến {{base_url}} để đổi giữa Local, Staging, Prod trong 1 giây. Với Jira: Nhận task chuyển In Progress, hoàn thành chuyển Code Review. Khai báo Log Work trung thực. Và quy tắc vàng: Comment lưu vết. Mọi thỏa thuận thay đổi logic với Backend hay Designer đều phải comment ghi chú trên ticket, không chỉ nói mồm qua chat!">
+    <div class="slide" data-slide="10" data-notes="Trường học không dạy nhưng công ty nào cũng bắt dùng: Postman và Jira. Với Postman: Đừng chỉ gõ link rồi bấm Send. 1 là tạo Environments với biến {{base_url}} để đổi giữa Local, Staging, Prod trong 1 giây. 2 là Kỹ năng Import & Export: Export Collection v2.1 để commit vào Git hoặc share cho Frontend/QA; Import cURL từ tab Network trên Chrome để tái hiện request lỗi trong 2 giây mà không cần tạo thủ công; Import Swagger/OpenAPI spec tự sinh toàn bộ endpoints. Lưu ý sống còn: Khi export Environment, chỉ để URL ở Initial Value, tuyệt đối không để lộ Token/Secret kẻo commit lên Git công khai! Với Jira: Nhận task chuyển In Progress, hoàn thành chuyển Code Review. Khai báo Log Work trung thực. Và quy tắc vàng: Comment lưu vết. Mọi thỏa thuận thay đổi logic với Backend hay Designer đều phải comment ghi chú trên ticket!">
       <span class="slide-eyebrow eyebrow-indigo">🤝 BỘ ĐÔI GIAO TIẾP DỰ ÁN</span>
       <h1 class="slide-title">Postman & Jira: Tác Phong Làm Việc Chuyên Nghiệp</h1>
       <p class="slide-subtitle">Chuẩn hóa cách kiểm thử độc lập và quản trị tiến độ công việc hàng ngày.</p>
@@ -1258,11 +1263,12 @@
         <div class="box-card">
           <span class="badge-pill pill-amber">POSTMAN</span>
           <h3 class="card-heading" style="margin-top: 6px;">Cầu Nối Độc Lập Frontend & Backend</h3>
-          <ul class="card-desc" style="list-style-type: none; display: flex; flex-direction: column; gap: 10px; padding-left: 0; margin-top: 6px;">
-            <li>🔸 <strong>Environments <code>{{base_url}}</code>:</strong> Đổi môi trường giữa Local, Staging và Production trong 1 click chuột thay vì sửa từng link API.</li>
+          <ul class="card-desc" style="list-style-type: none; display: flex; flex-direction: column; gap: 8px; padding-left: 0; margin-top: 6px; font-size: 0.81rem;">
+            <li>🔸 <strong>Environments <code>{{base_url}}</code>:</strong> Đổi môi trường Local, Staging, Prod trong 1 click chuột thay vì sửa từng link API.</li>
             <li>🔸 <strong>Test API độc lập:</strong> Luôn dùng Postman gọi thử API xem cấu trúc JSON trước khi viết code giao diện.</li>
             <li>🔸 <strong>Sandbox Luyện Tập:</strong> Thực hành test GET/POST/Auth qua <a href="https://postman-echo.com" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: underline; font-weight: 700;">https://postman-echo.com ↗</a></li>
-            <li>🔸 <strong>Export cURL:</strong> Xuất lệnh cURL đính kèm vào ticket bug để Backend tái hiện lỗi tức thì.</li>
+            <li>🔸 <strong>Kỹ Năng Import/Export:</strong> Export Collection commit vào Git; Import cURL từ Chrome Network hoặc Swagger spec tự sinh hàng loạt endpoint trong 2 giây.</li>
+            <li>🔸 <strong>Export cURL & Code Snippet:</strong> Xuất request thành mã cURL, JS Fetch, PHP Guzzle đính kèm ticket bug trên Jira.</li>
           </ul>
         </div>
 

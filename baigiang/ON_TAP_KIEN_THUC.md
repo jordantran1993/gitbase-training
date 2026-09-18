@@ -27,9 +27,10 @@
 | **Docker & Docker Compose** | Môi Trường Ảo Hóa | Khởi động toàn bộ Database (MySQL 8), Cache (Redis), Webserver chỉ bằng lệnh `docker compose up -d`. Đảm bảo máy cá nhân chạy giống hệt máy chủ Staging/Production. |
 | **DBeaver / TablePlus / Navicat** | Quản Trị Cơ Sở Dữ Liệu | Mở xem cấu trúc bảng, kiểm tra khóa ngoại (Foreign Key), test chạy thử các câu truy vấn phức tạp và xem biểu đồ phân tích `EXPLAIN`. |
 | **Xdebug (PHP Debugger)** | Điều Tra Lỗi Backend | Khi gặp lỗi logic phức tạp, vòng lặp lớn hoặc lỗi 500: cắm Breakpoint, Conditional Breakpoint để dừng chương trình, xem Call Stack và giá trị từng biến trong RAM. |
+| **Chrome DevTools (Sources Tab / JS Debugger)** | Debug & Bắt Lỗi JS Nâng Cao | Cắm Conditional Breakpoint bắt theo biểu hiện lỗi (`isNaN(price)`), Pause on Exceptions bắt lỗi crash tự động, Event Listener Breakpoints truy vết nút bấm ẩn danh trong dự án 500 file. Lab thực hành: [`demo_debug_javascript.html`](demo_debug_javascript.html). |
 | **Chrome DevTools (Network Tab)** | Kiểm Tra Frontend / API | Soi request API nào bị đỏ 4xx/5xx, kiểm tra Payload gửi lên, Response trả về, thời gian chờ (Latency) và dùng tính năng **Replay XHR** để bắn lại request. |
 | **Chrome DevTools (Application Tab)** | Kiểm Tra Lưu Trữ Web | Xem các Cookie đang lưu trên trình duyệt (kiểm tra cờ `HttpOnly`, `Secure`, `SameSite`), kiểm tra dữ liệu trong `LocalStorage` và `SessionStorage`. |
-| **Postman / Insomnia** | Kiểm Thử API Độc Lập | Test độc lập API Backend trước khi viết code giao diện. Sử dụng Environments `{{base_url}}` để đổi môi trường. Sandbox thực hành: [https://postman-echo.com](https://postman-echo.com). Xuất cURL đính kèm ticket bug. |
+| **Postman / Insomnia** | Kiểm Thử API & Chia Sẻ Team | Test độc lập API Backend trước khi viết code giao diện. Sử dụng Environments `{{base_url}}` để đổi môi trường. Sandbox: [https://postman-echo.com](https://postman-echo.com). Kỹ năng sống còn: **Export Collection** commit Git/gửi team, **Import cURL** từ Chrome Network tái hiện lỗi trong 2s, import Swagger tự sinh toàn bộ endpoints. |
 | **Laravel Telescope / Debugbar** | Profiling Hiệu Năng | Bắt lỗi N+1 Query, đếm số lượng câu SQL chạy trên 1 trang web, đo thời gian thực thi, soi log Job, Mail, Event được kích hoạt ngầm. |
 | **Jira / Redmine / Trello** | Quản Trị Tiến Độ Dự Án | Nhận việc chuyển `In Progress`, hoàn thành chuyển `Code Review`. Khai báo giờ làm việc (Log Work) mỗi ngày, comment lưu vết mọi thỏa thuận thay đổi logic. |
 | **Ubuntu Linux Terminal (SSH)** | Vận Hành Máy Chủ Thật | Khi deploy ứng dụng lên server cloud, cấu hình Nginx, xem file log hệ thống thời gian thực bằng `tail -f`, phân quyền thư mục bằng `chmod`/`chown`. |
@@ -263,7 +264,7 @@
 
 ---
 
-### - [ ] 21. Kiểm Thử API Độc Lập Với Postman & Sandbox Postman Echo
+### - [ ] 21. Kiểm Thử API Độc Lập Với Postman, Sandbox Postman Echo & Kỹ Năng Import/Export
 * **Môi trường thực hành chuẩn:** Sử dụng Sandbox chính thức [https://postman-echo.com](https://postman-echo.com)
 * **Hàng loạt câu hỏi & bài tập cọ xát thực tế:**
   1. Tại sao một kỹ sư Frontend giỏi luôn dùng Postman test API Backend trước khi bắt tay vào code giao diện?
@@ -271,7 +272,14 @@
   3. Gọi thử request `GET {{base_url}}/get?user=intern&status=active`: Em đọc thấy các Query Parameters được server phản hồi lại ở trường nào trong JSON?
   4. Gửi một request `POST {{base_url}}/post` với Header `Content-Type: application/json` và body JSON raw `{"title": "Bug 101", "severity": "high"}`: Phân biệt Payload gửi lên và Response nhận về?
   5. Thử nghiệm cơ chế Cookie bằng API `GET {{base_url}}/cookies/set?session_token=xyz123` và `GET {{base_url}}/cookies`: Postman lưu trữ và tự động gửi kèm Cookie này ở các request sau như thế nào?
-  6. Tính năng **Export cURL** trong Postman nằm ở đâu? Tại sao việc dán lệnh cURL vào ticket báo bug trên Jira lại giúp lập trình viên Backend tái hiện lỗi chỉ trong 5 giây mà không cần hỏi lại?
+  6. **Kỹ Năng Export Thực Tế:**
+     - **Export Collection (v2.1 JSON):** Khi hoàn thành module API, làm thế nào để xuất toàn bộ Collection ra file `.json` để commit vào thư mục `docs/postman/` trên Git hoặc chia sẻ cho Tester/Frontend?
+     - **Export Environment & Hiểm họa lộ Secret:** Phân biệt rõ sự khác nhau giữa **Initial Value** (giá trị mặc định được export và chia sẻ công khai) và **Current Value** (giá trị cục bộ chỉ lưu trên máy cá nhân). Tại sao việc để lộ Secret Key, Token, Password vào *Initial Value* khi export file JSON đưa lên Git là một lỗi bảo mật nghiêm trọng?
+     - **Export cURL & Code Snippet:** Tính năng biểu tượng `</>` (Code snippet) ở cột phải Postman cho phép xuất một request thành mã nguồn nào (JavaScript `fetch`/`axios`, PHP `cURL`, Python `requests`)? Khi gắn mã cURL này vào ticket Jira báo lỗi cho Backend, nó giúp tiết kiệm bao nhiêu thời gian trao đổi?
+  7. **Kỹ Năng Import Thực Tế:**
+     - **Import cURL từ Chrome DevTools (Tuyệt chiêu làm việc nhanh gấp 10 lần):** Khi duyệt web thấy một request trong tab Network bị lỗi 500, thay vì ngồi tạo tay từng URL, Header, Body trong Postman, làm thế nào để dùng chuột phải chọn **Copy > Copy as cURL**, sau đó bấm **Import** trong Postman để tái hiện nguyên vẹn request đó trong 2 giây?
+     - **Import OpenAPI / Swagger Spec:** Làm sao để import đường dẫn URL `swagger.json` hoặc file YAML từ Backend vào Postman để tự động sinh ra toàn bộ Collection gồm hàng chục endpoints kèm theo sẵn schema mô tả và dữ liệu mẫu mà không phải nhập tay?
+     - **Import Collection & Environment:** Sau khi clone mã nguồn dự án từ Git về, làm sao để kéo thả file `.postman_collection.json` và `.postman_environment.json` vào Postman để cả team có thể dùng chung cấu hình ngay lập tức?
 
 ---
 
