@@ -21,3 +21,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/products', [ProductController::class, 'index']); // Main thêm ở đây
+
+Route::get('/login', [AuthController::class, 'login']); // Feature thêm ở đúng vị trí này
+Route::get('/signup', [AuthController::class, 'signup']); // Feature thêm ở đúng vị trí này
