@@ -1,0 +1,1794 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masterclass: Từ Sinh Viên Đến Kỹ Sư Web Đạt Chuẩn Junior Thực Chiến (120 Phút)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #090d16;
+      --bg-card: rgba(18, 24, 38, 0.85);
+      --bg-card-hover: rgba(28, 38, 58, 0.95);
+      --border-card: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(99, 102, 241, 0.35);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --accent-indigo: #6366f1;
+      --accent-cyan: #06b6d4;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --accent-purple: #a855f7;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navigation & Progress */
+    #progress-bar-container {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 100;
+    }
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-indigo), var(--accent-cyan), var(--accent-emerald));
+      transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    header {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(9, 13, 22, 0.8);
+      backdrop-filter: blur(12px);
+      z-index: 50;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      letter-spacing: -0.01em;
+    }
+    .brand-tag {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(6, 182, 212, 0.25));
+      border: 1px solid var(--border-accent);
+      color: #a5b4fc;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-action {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn-action:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+    .btn-action.active {
+      background: linear-gradient(135deg, var(--accent-indigo), #4f46e5);
+      border-color: #818cf8;
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+    }
+
+    .slide-counter {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      padding: 0 8px;
+    }
+
+    /* Main Deck Stage */
+    #deck-stage {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 40px 48px;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      width: 92%;
+      max-width: 1280px;
+      height: calc(100vh - 120px);
+      max-height: 720px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 20px;
+      padding: 40px 52px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.96) translateY(20px);
+      transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1) translateY(0);
+      z-index: 10;
+    }
+
+    /* Typography inside slides */
+    .slide-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+    .eyebrow-indigo { color: #818cf8; }
+    .eyebrow-cyan { color: #22d3ee; }
+    .eyebrow-emerald { color: #34d399; }
+    .eyebrow-amber { color: #fbbf24; }
+    .eyebrow-rose { color: #fb7185; }
+
+    .slide-title {
+      font-size: 2.15rem;
+      font-weight: 800;
+      line-height: 1.22;
+      letter-spacing: -0.025em;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+    .slide-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 24px;
+    }
+
+    /* Grids & Cards */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      flex: 1;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      flex: 1;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      flex: 1;
+    }
+
+    .box-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 14px;
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.2s ease;
+    }
+    .box-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+    .box-card-highlight {
+      background: linear-gradient(145deg, rgba(99, 102, 241, 0.12), rgba(6, 182, 212, 0.06));
+      border-color: rgba(99, 102, 241, 0.3);
+    }
+
+    .card-header-icon {
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+    .card-heading {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    /* Terminal Window Mockup */
+    .terminal-box {
+      background: #0b0f19;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      overflow: hidden;
+      font-family: var(--font-mono);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+      margin-top: 10px;
+    }
+    .terminal-topbar {
+      background: #131b2e;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1px solid #1e293b;
+    }
+    .term-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .term-dot-r { background: #ef4444; }
+    .term-dot-y { background: #f59e0b; }
+    .term-dot-g { background: #10b981; }
+    .term-title {
+      font-size: 0.72rem;
+      color: #64748b;
+      margin-left: 8px;
+    }
+    .terminal-body {
+      padding: 16px 18px;
+      font-size: 0.82rem;
+      line-height: 1.65;
+      color: #e2e8f0;
+      overflow-x: auto;
+    }
+    .term-cmd { color: #38bdf8; font-weight: 600; }
+    .term-flag { color: #f43f5e; }
+    .term-comment { color: #64748b; font-style: italic; }
+    .term-success { color: #34d399; }
+    .term-warn { color: #fbbf24; }
+
+    /* Comparison Table */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 0.86rem;
+    }
+    .compare-table th {
+      background: rgba(255, 255, 255, 0.05);
+      text-align: left;
+      padding: 12px 16px;
+      font-weight: 700;
+      color: #e2e8f0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .compare-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .compare-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .badge-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+    .pill-red { background: rgba(239, 68, 68, 0.18); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .pill-green { background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .pill-blue { background: rgba(99, 102, 241, 0.18); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); }
+    .pill-amber { background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+    /* Bottom Navigation Bar */
+    footer {
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(9, 13, 22, 0.8);
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+    .nav-hints {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .kbd {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-main);
+    }
+
+    /* Speaker Notes Drawer (Nút bật kịch bản người nói) */
+    #notes-drawer {
+      position: fixed;
+      right: 0;
+      top: 56px;
+      width: 440px;
+      height: calc(100vh - 108px);
+      background: #0d121f;
+      border-left: 1px solid rgba(99, 102, 241, 0.25);
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.6);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 80;
+      overflow-y: auto;
+    }
+    #notes-drawer.open {
+      transform: translateX(0);
+    }
+
+    .notes-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 16px;
+    }
+    .notes-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #818cf8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .notes-content {
+      font-size: 0.92rem;
+      line-height: 1.7;
+      color: #cbd5e1;
+    }
+    .notes-content p {
+      margin-bottom: 14px;
+    }
+    .notes-content blockquote {
+      background: rgba(99, 102, 241, 0.1);
+      border-left: 3px solid var(--accent-indigo);
+      padding: 12px 14px;
+      border-radius: 0 8px 8px 0;
+      margin: 14px 0;
+      font-style: italic;
+      color: #e0e7ff;
+    }
+    .notes-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.12);
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    /* Print / PDF Mode */
+    @media print {
+      body {
+        overflow: visible !important;
+        height: auto !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+      header, footer, #notes-drawer, #progress-bar-container {
+        display: none !important;
+      }
+      #deck-stage {
+        display: block !important;
+        padding: 0 !important;
+      }
+      .slide {
+        position: relative !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        page-break-after: always !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 100vh !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: #ffffff !important;
+        color: #0f172a !important;
+      }
+      .slide-title { color: #0f172a !important; }
+      .box-card {
+        background: #f8fafc !important;
+        border-color: #e2e8f0 !important;
+        color: #1e293b !important;
+      }
+      .card-heading { color: #0f172a !important; }
+      .card-desc { color: #475569 !important; }
+      .terminal-box { background: #0f172a !important; color: #f8fafc !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Progress Bar -->
+  <div id="progress-bar-container">
+    <div id="progress-bar"></div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <span class="brand-tag">Developer Masterclass</span>
+      <span>Hành Trình Chinh Phục Junior 2026</span>
+    </div>
+
+    <div class="controls">
+      <span class="slide-counter" id="slide-num">01 / 26</span>
+      <button class="btn-action" id="btn-prev" title="Trang trước (Phím Mũi tên Trái)">◀ Trước</button>
+      <button class="btn-action" id="btn-next" title="Trang sau (Phím Mũi tên Phải hoặc Phím Cách)">Sau ▶</button>
+      <button class="btn-action" id="btn-notes" title="Bật/Tắt Lời thoại kịch bản giảng bài (Phím S)">🎙️ Lời Thoại (S)</button>
+      <button class="btn-action" id="btn-fullscreen" title="Toàn màn hình (Phím F)">⛶ Toàn Màn Hình</button>
+    </div>
+  </header>
+
+  <!-- Main Slide Deck Stage -->
+  <main id="deck-stage">
+
+    <!-- SLIDE 1: Cover -->
+    <div class="slide active" data-slide="1" data-notes="Chào em, hôm nay anh muốn chia sẻ với em một điều mà hầu như không trường đại học nào dạy: Khoảng cách giữa một sinh viên mới ra trường và một kỹ sư đi làm thực tế nó lớn như thế nào. Hồi còn đi học, em được giao đồ án, em ngồi gõ code một mình một máy. Em thấy màn hình hiện ra kết quả, bấm nút ăn tiền là em thở phào: 'Xong rồi, mai nộp bài lấy điểm A!'. Nhưng khi bước chân vào công ty, em không code một mình nữa. Code viết ra cho người khác đọc và hệ thống bảo trì trong nhiều năm. Phần mềm chạy 24/7 có hàng nghìn người dùng thật, lỗi là công ty mất tiền. Đi làm không phải suốt ngày cắm mặt gõ code mới, mà 50% thời gian là đọc code cũ, họp bàn specs, review code và debug. Nếu giữ tư duy sinh viên, em sẽ bị ngợp ngay tuần đầu tiên!">
+      <span class="slide-eyebrow eyebrow-indigo">⚡ CHUYÊN ĐỀ 1: BỨC TRANH TOÀN CẢNH</span>
+      <h1 class="slide-title">Sinh Viên Làm Đồ Án<br><span style="background: linear-gradient(90deg, #818cf8, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">vs Kỹ Sư Tại Doanh Nghiệp</span></h1>
+      <p class="slide-subtitle">Chuyển dịch tư duy sống còn để xóa bỏ bỡ ngỡ ngay từ ngày đầu đi làm thực tế.</p>
+
+      <div class="grid-2">
+        <div class="box-card" style="border-left: 4px solid #f43f5e;">
+          <span class="card-header-icon">🎓</span>
+          <h3 class="card-heading">Tư Duy Sinh Viên Làm Bài Tập Lớn</h3>
+          <ul class="card-desc" style="list-style-type: none; display: flex; flex-direction: column; gap: 12px; padding-left: 0;">
+            <li>❌ <strong>Code một mình:</strong> Miễn sao chạy được trên máy mình là coi như xong.</li>
+            <li>❌ <strong>Thích gì cài nấy:</strong> Cài trực tiếp thư viện vào hệ điều hành, không quản lý version.</li>
+            <li>❌ <strong>Không tài liệu, không test:</strong> Nộp bài xong bảo vệ điểm số là cất xó vĩnh viễn.</li>
+            <li>❌ <strong>Trách nhiệm ngắn hạn:</strong> Bàn giao xong không cần quan tâm đến bảo trì hay mở rộng.</li>
+          </ul>
+        </div>
+
+        <div class="box-card box-card-highlight" style="border-left: 4px solid #10b981;">
+          <span class="card-header-icon">💼</span>
+          <h3 class="card-heading">Tác Phong Kỹ Sư Phần Mềm Chuyên Nghiệp</h3>
+          <ul class="card-desc" style="list-style-type: none; display: flex; flex-direction: column; gap: 12px; padding-left: 0;">
+            <li>✅ <strong>Code trong tập thể:</strong> Viết mã nguồn sạch, có comment, đồng nghiệp đọc hiểu trong 5 phút.</li>
+            <li>✅ <strong>Vận hành 24/7:</strong> Phần mềm phục vụ hàng nghìn người dùng, hạn chế tối đa rủi ro chết hệ thống.</li>
+            <li>✅ <strong>50% thời gian không phải gõ code:</strong> Đọc code cũ, làm rõ yêu cầu với PO, review code, debug.</li>
+            <li>✅ <strong>Quy trình chuẩn:</strong> Tuân thủ Gitflow, CI/CD, viết tài liệu và kiểm thử kịch bản ngoại lệ.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: Agile & Jira -->
+    <div class="slide" data-slide="2" data-notes="Một ngày đi làm của em diễn ra thế nào? Đa số công ty chạy theo Scrum theo chu kỳ Sprint 2 tuần. Mỗi sáng 9h có 15 phút Daily Standup: Hôm qua làm gì? Hôm nay làm gì? Có gặp khó khăn gì không? Mọi việc em làm đều quản lý trên Jira qua các ticket. Nhận việc thì kéo sang In Progress. Code xong tự test thì tạo Pull Request cho Senior soi code. Senior duyệt mới deploy lên Staging cho QA test. QA bấm Pass thì task mới hoàn thành. Mọi thứ đều có vết lưu lại, làm việc minh bạch và chuyên nghiệp.">
+      <span class="slide-eyebrow eyebrow-cyan">🔄 VẬN HÀNH THỰC TẾ</span>
+      <h1 class="slide-title">Vòng Lặp Sprint & Vòng Đời 1 Ticket Trên Jira</h1>
+      <p class="slide-subtitle">Quy trình vận hành chuẩn Agile/Scrum của các công ty công nghệ chuyên nghiệp.</p>
+
+      <div class="grid-3" style="margin-bottom: 20px;">
+        <div class="box-card">
+          <div style="font-family: var(--font-mono); color: #818cf8; font-weight: 700; font-size: 0.8rem; margin-bottom: 6px;">01. SPRINT PLANNING</div>
+          <h4 class="card-heading">Đầu Sprint (2 Tuần)</h4>
+          <p class="card-desc">Nhận User Stories từ Product Owner (PO), cả team cùng ước lượng khối lượng (Estimate) và cam kết phạm vi bàn giao.</p>
+        </div>
+        <div class="box-card">
+          <div style="font-family: var(--font-mono); color: #38bdf8; font-weight: 700; font-size: 0.8rem; margin-bottom: 6px;">02. DAILY STANDUP</div>
+          <h4 class="card-heading">15 Phút Mỗi Sáng</h4>
+          <p class="card-desc">Trả lời nhanh 3 câu: Hôm qua làm gì? Hôm nay làm gì? Có gặp vật cản (Blocker) nào cần cả team hỗ trợ tháo gỡ không?</p>
+        </div>
+        <div class="box-card">
+          <div style="font-family: var(--font-mono); color: #34d399; font-weight: 700; font-size: 0.8rem; margin-bottom: 6px;">03. DEMO & RETRO</div>
+          <h4 class="card-heading">Cuối Sprint</h4>
+          <p class="card-desc">Demo sản phẩm thực tế cho Stakeholder xem. Họp Retrospective: Cái gì làm tốt? Cái gì chưa tốt? Cần cải tiến gì?</p>
+        </div>
+      </div>
+
+      <div class="box-card" style="background: rgba(15, 23, 42, 0.6);">
+        <div style="font-size: 0.82rem; font-weight: 700; color: #cbd5e1; margin-bottom: 12px;">VÒNG ĐỜI CỦA MỘT TICKET TRÊN JIRA / KANBAN:</div>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+          <span class="badge-pill pill-blue">To Do (Sắp làm)</span> ➔
+          <span class="badge-pill pill-amber">In Progress (Đang code)</span> ➔
+          <span class="badge-pill pill-blue">Self-Test (Tự kiểm thử)</span> ➔
+          <span class="badge-pill pill-blue">Code Review (Tạo PR)</span> ➔
+          <span class="badge-pill pill-amber">QA Testing (Tester test)</span> ➔
+          <span class="badge-pill pill-green">Done (Lên Production)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: IDE & Node Setup -->
+    <div class="slide" data-slide="3" data-notes="Đầu tiên là nơi em làm việc mỗi ngày: Chiếc máy tính. Đừng cài extension vô tội vạ. Cài ngay Prettier và ESLint, bật Format on Save để mỗi lần bấm Ctrl+S là code tự căn lề chấm phẩy chuẩn đét. Cài thêm Error Lens để thấy lỗi cú pháp ngay trên dòng code. Dùng NVM để quản lý Node, vì dự án cũ dùng Node 16, dự án mới dùng Node 20. Có NVM gõ 1 lệnh là switch xong. Và nhớ điều cấm kỵ: Gặp lỗi npm install đừng bao giờ xóa file package-lock.json bừa bãi! Nó lưu phiên bản chính xác của cả team, em xóa đi là máy em khác máy mọi người ngay.">
+      <span class="slide-eyebrow eyebrow-indigo">🛠️ CHUYÊN ĐỀ 2: BỘ ĐỒ NGHỀ SINH TỒN</span>
+      <h1 class="slide-title">Môi Trường Làm Việc Chuẩn: VS Code & Node.js</h1>
+      <p class="slide-subtitle">Thiết lập môi trường đồng bộ với team, loại bỏ hoàn toàn lỗi vặt cấu hình.</p>
+
+      <div class="grid-2">
+        <div class="box-card">
+          <h3 class="card-heading">Bộ Extension VS Code Bắt Buộc</h3>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 8px;">
+            <div>
+              <span class="badge-pill pill-blue">ESLint + Prettier</span>
+              <p class="card-desc" style="margin-top: 4px;">Bật chế độ <code>Format on Save</code>. Mỗi khi nhấn Ctrl + S, code tự động căn lề chuẩn quy chuẩn công ty.</p>
+            </div>
+            <div>
+              <span class="badge-pill pill-green">GitLens / Git Graph</span>
+              <p class="card-desc" style="margin-top: 4px;">Soi ngay ai là tác giả của từng dòng code (git blame) và trực quan hóa cây nhánh Git.</p>
+            </div>
+            <div>
+              <span class="badge-pill pill-amber">Error Lens</span>
+              <p class="card-desc" style="margin-top: 4px;">Hiển thị cảnh báo và lỗi cú pháp trực tiếp ngay cuối dòng code, không cần chờ chạy app mới biết.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="box-card">
+          <h3 class="card-heading">Quản Lý Phiên Bản Node với NVM</h3>
+          <p class="card-desc">Dự án cũ chạy Node 16, dự án mới chạy Node 20. Tuyệt đối không cài chết 1 bản Node vào máy!</p>
+          
+          <div class="terminal-box">
+            <div class="terminal-topbar">
+              <span class="term-dot term-dot-r"></span>
+              <span class="term-dot term-dot-y"></span>
+              <span class="term-dot term-dot-g"></span>
+              <span class="term-title">terminal</span>
+            </div>
+            <div class="terminal-body">
+              <span class="term-comment"># Chuyển phiên bản Node trong 1 giây</span><br>
+              <span class="term-cmd">nvm</span> use 18<br>
+              <span class="term-cmd">nvm</span> use 20<br><br>
+              <span class="term-comment"># CẤM KỴ: Không tự ý xóa package-lock.json</span><br>
+              <span class="term-warn">⚠️ File lock bảo đảm 10 người cài đúng 100% bản thư viện giống nhau!</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: Git Real World (merge vs rebase & Conventional Commits) -->
+    <div class="slide" data-slide="4" data-notes="Giờ đến phần cốt lõi của Git mà 90% sinh viên ra trường hiểu sai: git merge vs git rebase. Bản chất git merge là cơ chế 3-way merge, giống như bắc một cây cầu nối 2 cành cây lại với nhau. Nó giữ nguyên lịch sử phân nhánh, nhưng sinh ra 1 commit rác có 2 commit cha (two parents). Khi có 10 người cùng merge, cây Git bị rối mạng nhện như đường ray xe lửa đan chéo, rất khó tìm bug! Ngược lại, git rebase là thay đổi nền móng: Git tạm thời tháo các commit D, E của em ra thành các patch tạm, tua nhánh của em về đỉnh mới nhất C của main, rồi lần lượt áp từng commit D', E' lên trên ngọn. Mỗi commit được sinh ra với một mã hash hoàn toàn mới! Kết quả là lịch sử Git thẳng tắp 1 đường, không có một commit rác nào. Nhưng nhớ Quy tắc vàng: Chỉ rebase trên nhánh riêng feature của mình trước khi tạo PR, tuyệt đối cấm rebase trên nhánh chung develop hoặc main! Cuối cùng, để chuyên nghiệp hơn, em phải viết commit theo chuẩn thế giới là Conventional Commits, bấm vào link trên màn hình để xem quy chuẩn chuẩn quốc tế.">
+      <span class="slide-eyebrow eyebrow-emerald">🌿 GIT THỰC CHIẾN CHUYÊN SÂU</span>
+      <h1 class="slide-title">Hiểu Thấu Bản Chất: <code>git merge</code> vs <code>git rebase</code></h1>
+      <p class="slide-subtitle">Bóc tách cơ chế bên dưới nắp ca-pô và quy chuẩn thông điệp Conventional Commits quốc tế.</p>
+
+      <!-- Grid 2 Cột: Merge vs Rebase trực quan -->
+      <div class="grid-2" style="margin-bottom: 14px;">
+        <!-- Cột Trái: git merge -->
+        <div class="box-card" style="border-left: 4px solid #f59e0b;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+            <span class="badge-pill pill-amber" style="font-size: 0.8rem;">CƠ CHẾ 1: git merge (3-Way Merge)</span>
+            <span style="font-size: 0.72rem; color: #94a3b8;">Bắc cầu nối 2 cành</span>
+          </div>
+          
+          <!-- Sơ đồ Commit Graph Trực Quan của Merge -->
+          <div class="terminal-box" style="margin: 6px 0 10px; background: #070a12;">
+            <div class="terminal-body" style="padding: 10px 14px; font-size: 0.78rem; line-height: 1.5;">
+              <span class="term-comment">main:</span>    <span style="color: #cbd5e1;">A ─── B ─── C ───────────────</span> <span class="badge-pill pill-amber" style="padding: 1px 6px;">M</span> <span class="term-warn">(Merge Commit)</span><br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #64748b;">\             /</span><br>
+              <span class="term-comment">feature:</span> <span style="color: #64748b;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span style="color: #38bdf8;">D ─────────── E</span>
+            </div>
+          </div>
+
+          <ul class="card-desc" style="list-style-type: none; display: flex; flex-direction: column; gap: 5px; padding-left: 0; font-size: 0.78rem;">
+            <li>🔸 <strong>Cơ chế ngầm:</strong> Git tìm commit gốc chung, tạo ra <strong>Merge Commit (M)</strong> có <strong>2 cha (C & E)</strong>.</li>
+            <li>🔸 <strong>Hệ quả:</strong> Lịch sử phân nhánh rối rắm như mạng nhện (diamond graph) khi nhiều người cùng làm.</li>
+            <li>🔸 <strong>Ưu điểm:</strong> Giữ nguyên chính xác mốc thời gian diễn ra của từng nhánh.</li>
+          </ul>
+        </div>
+
+        <!-- Cột Phải: git rebase -->
+        <div class="box-card box-card-highlight" style="border-left: 4px solid #10b981;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+            <span class="badge-pill pill-green" style="font-size: 0.8rem;">CƠ CHẾ 2: git rebase (Re-Basing)</span>
+            <span style="font-size: 0.72rem; color: #34d399;">Bứng cây trồng lên đỉnh đồi</span>
+          </div>
+
+          <!-- Sơ đồ Commit Graph Trực Quan của Rebase -->
+          <div class="terminal-box" style="margin: 6px 0 10px; background: #070a12;">
+            <div class="terminal-body" style="padding: 10px 14px; font-size: 0.78rem; line-height: 1.5;">
+              <span class="term-comment">main:</span>    <span style="color: #cbd5e1;">A ─── B ─── C</span><br>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #34d399;">\</span><br>
+              <span class="term-comment">feature:</span> <span style="color: #64748b;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="badge-pill pill-green" style="padding: 1px 6px;">D'</span> <span style="color: #34d399;">───</span> <span class="badge-pill pill-green" style="padding: 1px 6px;">E'</span> <span class="term-success">(Hash mới, thẳng tắp!)</span>
+            </div>
+          </div>
+
+          <ul class="card-desc" style="list-style-type: none; display: flex; flex-direction: column; gap: 5px; padding-left: 0; font-size: 0.78rem;">
+            <li>🔹 <strong>Cơ chế ngầm:</strong> Gỡ D, E thành patch tạm, tua về C, áp D', E' lên trên đỉnh.</li>
+            <li>🔹 <strong>Bản chất:</strong> Mỗi commit sinh ra có <strong>mã SHA-1 Hash hoàn toàn mới</strong>. Lịch sử thẳng tắp (Linear History).</li>
+            <li>🔹 <strong>Ưu điểm:</strong> Không có commit rác, lịch sử cực sạch, dễ dàng dùng <code>git bisect</code> để truy vết bug.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Banner Dưới: The Golden Rule & Conventional Commits Link -->
+      <div style="display: grid; grid-template-columns: 1.1fr 1.3fr; gap: 14px;">
+        <!-- The Golden Rule of Rebase -->
+        <div class="box-card" style="padding: 10px 14px; background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.25);">
+          <div style="font-size: 0.8rem; font-weight: 700; color: #f87171; display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+            <span>⚠️</span> QUY TẮC VÀNG CỦA REBASE (THE GOLDEN RULE)
+          </div>
+          <p style="font-size: 0.75rem; color: #cbd5e1; line-height: 1.4;">
+            ✔ <strong>ĐƯỢC:</strong> Rebase trên nhánh riêng (<code>feature/*</code>) trước khi tạo PR để cập nhật code mới.<br>
+            ❌ <strong>CẤM KỴ:</strong> Tuyệt đối không rebase trên nhánh chung (<code>main</code>, <code>develop</code>) vì làm thay đổi lịch sử cả team!
+          </p>
+        </div>
+
+        <!-- Conventional Commits Banner với link mở tab mới -->
+        <div class="box-card box-card-highlight" style="padding: 10px 14px; display: flex; flex-direction: column; justify-content: space-between;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size: 0.8rem; font-weight: 700; color: #38bdf8;">📝 Chuẩn Quốc Tế: Conventional Commits</span>
+            <a href="https://www.conventionalcommits.org/en/v1.0.0/" target="_blank" rel="noopener noreferrer" style="background: rgba(56, 189, 248, 0.2); border: 1px solid rgba(56, 189, 248, 0.4); color: #38bdf8; text-decoration: none; padding: 2px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s;">
+              Tra cứu chuẩn ➔
+            </a>
+          </div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 5px;">
+            <span class="badge-pill pill-blue" style="font-size: 0.68rem;">feat: tính năng</span>
+            <span class="badge-pill pill-red" style="font-size: 0.68rem;">fix: sửa lỗi</span>
+            <span class="badge-pill pill-purple" style="font-size: 0.68rem;">refactor: sửa code</span>
+            <span class="badge-pill pill-amber" style="font-size: 0.68rem;">docs: tài liệu</span>
+            <span class="badge-pill pill-green" style="font-size: 0.68rem;">chore: config</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4.1: Visual Before & After of Git Merge vs Rebase -->
+    <div class="slide" data-slide="4.1" data-notes="Để em nhìn thấy tận mắt các commit nó biến đổi thế nào trước và sau khi gõ lệnh, anh vẽ ra cho em 3 trạng thái: 1 là trạng thái ban đầu: main đang ở D, feature của em đang ở Y. Cả hai rẽ nhánh từ C. 2 là sau khi gõ git merge feature: Nhánh main sinh thêm 1 commit M mới gọi là Merge commit, nó có 2 commit cha là D và Y. Mã hash của X và Y vẫn giữ nguyên không đổi. Cây Git vẫn bị tách nhánh hình mạng nhện. 3 là sau khi gõ git rebase main: Git bốc 2 commit X và Y ra ngoài, tua nhánh về đỉnh D, rồi đặt nối tiếp lên thành X' và Y'. Nhìn kỹ chữ X phẩy và Y phẩy: Nó mang mã hash SHA-1 hoàn toàn mới! Nhánh của em bây giờ nối thẳng tắp từ D sang X' sang Y', không sinh thêm commit rác nào. Đó là lý do vì sao người ta gọi là re-base: Đổi gốc của nhánh từ C sang D!">
+      <span class="slide-eyebrow eyebrow-emerald">🌿 SO SÁNH TRỰC QUAN BEFORE & AFTER</span>
+      <h1 class="slide-title">Soi Tận Mắt Cây Commit: Trước & Sau Khi Merge vs Rebase</h1>
+      <p class="slide-subtitle">Quan sát sự dịch chuyển của các commit, nhánh và mã SHA-1 Hash trong từng trường hợp.</p>
+
+      <div class="grid-3" style="gap: 14px; margin-bottom: 14px;">
+        <!-- Panel 1: Before -->
+        <div class="box-card" style="border-top: 4px solid #818cf8;">
+          <div style="font-size: 0.8rem; font-weight: 700; color: #818cf8; margin-bottom: 6px;">01. BAN ĐẦU (BEFORE)</div>
+          <p class="card-desc" style="font-size: 0.76rem; margin-bottom: 8px;">Cùng xuất phát từ C. <code>main</code> có thêm D, <code>feature</code> có thêm X, Y:</p>
+          
+          <div class="terminal-box" style="margin: 0; background: #070a12;">
+            <div class="terminal-body" style="padding: 10px 12px; font-size: 0.75rem; line-height: 1.5;">
+              <span class="term-comment">main:</span>    A ── B ── <span style="color: #818cf8;">C</span> ── <span style="color: #38bdf8;">D</span><br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #64748b;">\</span><br>
+              <span class="term-comment">feature:</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: #fbbf24;">X ── Y</span>
+            </div>
+          </div>
+          <div style="font-size: 0.74rem; color: #94a3b8; margin-top: 8px;">
+            • Gốc chung ban đầu: <code>C</code><br>
+            • Feature tụt lại sau đỉnh D của main
+          </div>
+        </div>
+
+        <!-- Panel 2: After Merge -->
+        <div class="box-card" style="border-top: 4px solid #f59e0b;">
+          <div style="font-size: 0.8rem; font-weight: 700; color: #fbbf24; margin-bottom: 6px;">02. SAU KHI MERGE</div>
+          <p class="card-desc" style="font-size: 0.76rem; margin-bottom: 8px;">Chạy <code>git merge feature</code> trên nhánh main:</p>
+          
+          <div class="terminal-box" style="margin: 0; background: #070a12;">
+            <div class="terminal-body" style="padding: 10px 12px; font-size: 0.75rem; line-height: 1.5;">
+              <span class="term-comment">main:</span>    A ── B ── C ── D ──── <span class="badge-pill pill-amber" style="padding: 1px 5px;">M</span><br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #64748b;">\         /</span><br>
+              <span class="term-comment">feature:</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="color: #fbbf24;">X ─────── Y</span>
+            </div>
+          </div>
+          <div style="font-size: 0.74rem; color: #94a3b8; margin-top: 8px;">
+            • Sinh commit gộp <code>M</code> (2 cha D & Y)<br>
+            • Hash của <code>X, Y</code> <strong>giữ nguyên 100%</strong><br>
+            • Cây rẽ nhánh tạo hình mạng nhện
+          </div>
+        </div>
+
+        <!-- Panel 3: After Rebase -->
+        <div class="box-card box-card-highlight" style="border-top: 4px solid #10b981;">
+          <div style="font-size: 0.8rem; font-weight: 700; color: #34d399; margin-bottom: 6px;">03. SAU KHI REBASE</div>
+          <p class="card-desc" style="font-size: 0.76rem; margin-bottom: 8px;">Chạy <code>git rebase main</code> trên nhánh feature:</p>
+          
+          <div class="terminal-box" style="margin: 0; background: #070a12;">
+            <div class="terminal-body" style="padding: 10px 12px; font-size: 0.75rem; line-height: 1.5;">
+              <span class="term-comment">main:</span>    A ── B ── C ── D<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #34d399;">\</span><br>
+              <span class="term-comment">feature:</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="badge-pill pill-green" style="padding: 1px 5px;">X'</span> ── <span class="badge-pill pill-green" style="padding: 1px 5px;">Y'</span>
+            </div>
+          </div>
+          <div style="font-size: 0.74rem; color: #cbd5e1; margin-top: 8px;">
+            • Không có commit rác <code>M</code><br>
+            • <code>X', Y'</code> mang <strong>mã SHA-1 Hash MỚI</strong><br>
+            • Lịch sử nối tiếp <strong>thẳng tắp 1 hàng</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bảng Tổng Kết So Sánh Nhanh -->
+      <table class="compare-table" style="font-size: 0.8rem; margin-top: 0;">
+        <thead>
+          <tr>
+            <th>Tiêu Chí So Sánh</th>
+            <th>git merge</th>
+            <th>git rebase</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Mã Hash Commit</strong></td>
+            <td><span class="badge-pill pill-green">GIỮ NGUYÊN</span> (X và Y không đổi SHA-1)</td>
+            <td><span class="badge-pill pill-amber">BỊ THAY ĐỔI HOÀN TOÀN</span> (X, Y biến thành X', Y' với hash mới)</td>
+          </tr>
+          <tr>
+            <td><strong>Hình dạng cây Git (git log)</strong></td>
+            <td>Phân nhánh rườm rà (Non-linear, đan xen như mạng nhện)</td>
+            <td>Thẳng tắp 1 đường duy nhất (Linear History, cực kỳ sạch sẽ)</td>
+          </tr>
+          <tr>
+            <td><strong>Khả năng tìm bug (git bisect)</strong></td>
+            <td>Khó hơn vì có các commit gộp rác xen ngang</td>
+            <td>Rất dễ dàng và tự động, cô lập đúng commit gây lỗi trong tích tắc</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SLIDE 5: Git Stash & Cherry-pick -->
+    <div class="slide" data-slide="5" data-notes="Đây là 2 tình huống sinh viên chưa từng nghĩ tới: Tình huống 1 sếp giao việc khẩn: Đang code dở 50 dòng chưa commit được, sếp bắt checkout sang nhánh khác sửa gấp cái banner. Sinh viên thì copy code ra Notepad, người đi làm chỉ cần gõ 'git stash -u'. Toàn bộ code dở cất vào tủ, thư mục sạch bong. Sửa xong quay lại gõ 'git stash pop' lấy code ra làm tiếp. Tình huống 2 cherry-pick: Nhánh của bạn Tuấn có 1 commit fix bug cực hay, nhưng cả nhánh đó đang dang dở. Em không thể merge cả nhánh. Em chỉ cần gõ 'git cherry-pick <mã-commit>', Git bốc đúng 1 commit đó đập vào nhánh em, bỏ qua toàn bộ phần dở còn lại!">
+      <span class="slide-eyebrow eyebrow-emerald">🌿 TÌNH HUỐNG GIT THỰC TẾ</span>
+      <h1 class="slide-title">Kỹ Thuật Cứu Nguy: <code>git stash</code> & <code>git cherry-pick</code></h1>
+      <p class="slide-subtitle">Hai tuyệt chiêu xử lý các tình huống đột xuất trong dự án hàng ngày.</p>
+
+      <div class="grid-2">
+        <div class="box-card" style="border-left: 4px solid #38bdf8;">
+          <span class="badge-pill pill-blue">TÌNH HUỐNG 1</span>
+          <h3 class="card-heading" style="margin-top: 8px;">Sếp Giao Việc Gấp Giữa Chừng</h3>
+          <p class="card-desc">Đang code dở tính năng Đăng nhập (50 dòng code lỗi chưa thể commit). Tech Lead yêu cầu checkout sang nhánh hotfix gấp!</p>
+          
+          <div class="terminal-box">
+            <div class="terminal-body">
+              <span class="term-comment"># 1. Cất toàn bộ code dở vào tủ khóa</span><br>
+              <span class="term-cmd">git</span> stash -u<br><br>
+              <span class="term-comment"># Thư mục sạch tinh, checkout đi sửa hotfix...</span><br>
+              <span class="term-cmd">git</span> checkout hotfix/banner-overflow<br><br>
+              <span class="term-comment"># 2. Xong việc, quay lại lấy code ra làm tiếp</span><br>
+              <span class="term-cmd">git</span> checkout feature/login<br>
+              <span class="term-cmd">git</span> stash pop
+            </div>
+          </div>
+        </div>
+
+        <div class="box-card" style="border-left: 4px solid #a855f7;">
+          <span class="badge-pill pill-blue">TÌNH HUỐNG 2</span>
+          <h3 class="card-heading" style="margin-top: 8px;">Nhặt Đúng 1 Hạt Ngọc Giữa Bãi Rác</h3>
+          <p class="card-desc">Đồng nghiệp ở nhánh khác có viết 1 hàm tính thuế rất hay (mã commit <code>a1b2c3d</code>). Nhưng cả nhánh của họ còn đang lỗi dở dang.</p>
+          
+          <div class="terminal-box">
+            <div class="terminal-body">
+              <span class="term-comment"># Tuyệt đối KHÔNG merge cả nhánh của họ</span><br>
+              <span class="term-comment"># Đứng ở nhánh của mình và bốc đúng 1 commit:</span><br>
+              <span class="term-cmd">git</span> cherry-pick a1b2c3d<br><br>
+              <span class="term-success">✔ Git chỉ lấy đúng duy nhất commit đó đập vào nhánh của em!</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: Git Reset (--soft, --mixed, --hard) -->
+    <div class="slide" data-slide="6" data-notes="Giờ đến lệnh quyền lực nhất: git reset. Git có 3 tầng: Thư mục gõ code, phòng chờ Staging sau khi add, và lịch sử sau khi commit. Khi gõ git reset HEAD~1 có 3 chế độ: --soft là hủy commit nhưng giữ nguyên code ở phòng chờ Staging, cực kỳ an toàn để sửa lại commit hoặc bỏ bớt file mật khẩu lỡ commit nhầm. --mixed là chế độ mặc định, đưa code về trạng thái màu đỏ chưa add. Còn --hard là nút tự hủy, xóa sạch toàn bộ code khỏi ổ cứng! Nhớ nhé, chỉ dùng --hard khi chắc chắn 100% code đó là rác vứt đi!">
+      <span class="slide-eyebrow eyebrow-rose">⚠️ CỖ MÁY THỜI GIAN GIT</span>
+      <h1 class="slide-title">Làm Chủ <code>git reset</code>: Phân Biệt Soft, Mixed & Hard</h1>
+      <p class="slide-subtitle">Hiểu thấu đáo 3 trạng thái bộ nhớ để quay ngược lịch sử an toàn.</p>
+
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Lệnh Reset (Lùi 1 commit)</th>
+            <th>Working Directory (File ổ cứng)</th>
+            <th>Staging Area (Sau git add)</th>
+            <th>Tình Huống Sử Dụng Thực Tế</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code style="color: #34d399;">git reset --soft HEAD~1</code></td>
+            <td><span class="badge-pill pill-green">GIỮ NGUYÊN</span></td>
+            <td><span class="badge-pill pill-green">GIỮ NGUYÊN (Staged)</span></td>
+            <td>Lỡ tay commit nhầm file <code>.env</code> mật khẩu, hoặc muốn đổi lại commit message cho chuẩn. Rất an toàn!</td>
+          </tr>
+          <tr>
+            <td><code style="color: #fbbf24;">git reset --mixed HEAD~1</code><br><span style="font-size: 0.72rem; color: #64748b;">(Mặc định khi chỉ gõ git reset)</span></td>
+            <td><span class="badge-pill pill-green">GIỮ NGUYÊN</span></td>
+            <td><span class="badge-pill pill-amber">BỊ HỦY (Unstaged)</span></td>
+            <td>Lỡ <code>git add .</code> cả đống file lộn xộn, muốn đưa về trạng thái màu đỏ để chia nhỏ ra commit lại từng phần.</td>
+          </tr>
+          <tr>
+            <td><code style="color: #f87171;">git reset --hard HEAD~1</code></td>
+            <td><span class="badge-pill pill-red">XÓA SẠCH SẼ</span></td>
+            <td><span class="badge-pill pill-red">XÓA SẠCH SẼ</span></td>
+            <td><strong>NÚT TỰ HỦY:</strong> Thử nghiệm tính năng mới thất bại nát bét, muốn xóa trắng quay về quá khứ. Cực kỳ cẩn thận!</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="box-card" style="margin-top: 18px; border-left: 4px solid #818cf8;">
+        <span style="font-weight: 700; color: #e2e8f0;">💡 Tuyệt chiêu xem lịch sử siêu gọn gàng:</span>
+        <code style="font-family: var(--font-mono); color: #38bdf8; margin-left: 10px;">git log --oneline --graph --all</code>
+        <p class="card-desc" style="margin-top: 6px;">Biến terminal thành một bản đồ cây commit trực quan, nhìn rõ ai đang rẽ nhánh nào trong 5 giây mà không bị tràn màn hình.</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: Docker in Daily Dev -->
+    <div class="slide" data-slide="7" data-notes="Tại sao phải dùng Docker? Ngày xưa sinh viên cài XAMPP/WAMP thẳng vào máy tính. Nhưng đi làm: Dự án 1 cần PHP 7.4 + MySQL 5.7; Dự án 2 cần PHP 8.2 + MySQL 8.0. Hai cái này cài chung máy là xung đột cổng 3306, làm treo máy ngay. Mất 3 ngày đầu tiên đi làm chỉ để setup máy! Dùng Docker: Mỗi dự án là 1 chiếc hộp kín. Máy chỉ cần cài Docker Desktop. Người mới vào chỉ gõ đúng 1 dòng 'docker compose up -d' là 30 giây sau có đủ Web, Database, Redis chạy êm ru. Không bao giờ còn câu: Trên máy em vẫn chạy bình thường mà lên server lại lỗi!">
+      <span class="slide-eyebrow eyebrow-cyan">🐳 DOCKER TRONG CÔNG VIỆC</span>
+      <h1 class="slide-title">Docker: Xóa Sổ Vĩnh Viễn "Máy Em Chạy Được Mà"</h1>
+      <p class="slide-subtitle">Bản chất của Container hóa và lý do vì sao dự án thực tế bắt buộc phải dùng.</p>
+
+      <div class="grid-2">
+        <div class="box-card" style="border-left: 4px solid #f43f5e;">
+          <h3 class="card-heading">Cách Cài Cắm Truyền Thống (XAMPP/WAMP)</h3>
+          <ul class="card-desc" style="list-style-type: none; display: flex; flex-direction: column; gap: 10px; padding-left: 0;">
+            <li>❌ <strong>Đụng độ phiên bản:</strong> Dự án cũ cần PHP 7.4, dự án mới cần PHP 8.2. Cài chung một máy gây xung đột cổng (Port 3306, 80).</li>
+            <li>❌ <strong>Rác hệ điều hành:</strong> Cài hàng chục dịch vụ chạy ngầm làm chậm máy tính cá nhân.</li>
+            <li>❌ <strong>Mất 2–3 ngày Onboarding:</strong> Người mới vào công ty tốn cả đống thời gian chỉ để cài môi trường và sửa lỗi máy.</li>
+          </ul>
+        </div>
+
+        <div class="box-card box-card-highlight" style="border-left: 4px solid #38bdf8;">
+          <h3 class="card-heading">Sức Mạnh Của Docker & Docker Compose</h3>
+          <ul class="card-desc" style="list-style-type: none; display: flex; flex-direction: column; gap: 10px; padding-left: 0;">
+            <li>✅ <strong>Đóng gói độc lập (Isolation):</strong> Mỗi dự án là một container kín, máy thật không cần cài bất kỳ DB nào.</li>
+            <li>✅ <strong>Nhất quán 100%:</strong> Môi trường Local giống hệt môi trường Staging/Production trên Cloud.</li>
+            <li>✅ <strong>Khởi động trong 30 giây:</strong> Chỉ cần gõ đúng 1 lệnh duy nhất là toàn bộ hệ sinh thái chạy mượt mà:</li>
+          </ul>
+          <div style="background: #0b0f19; padding: 10px 14px; border-radius: 8px; font-family: var(--font-mono); font-size: 0.85rem; color: #38bdf8; margin-top: 8px;">
+            docker compose up -d
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7.1: Why Learn Ubuntu / Linux -->
+    <div class="slide" data-slide="7.1" data-notes="Có một câu hỏi mà nhiều bạn sinh viên hay thắc mắc: 'Em code trên Windows hay Mac quen rồi, tại sao em lại phải học thêm Ubuntu làm gì cho nhức đầu?'. Anh trả lời cho em nghe: Em code ở máy cá nhân bằng gì cũng được, nhưng 95% máy chủ trên toàn thế giới chạy ứng dụng thực tế đều dùng Ubuntu hoặc Linux! Khi sản phẩm được đưa lên môi trường Staging hay Production, máy chủ đó hoàn toàn không có chuột hay giao diện đồ họa nào cả. Em muốn kiểm tra app, muốn deploy, muốn xem log lúc server sập lúc nửa đêm, em bắt buộc phải mở màn hình đen Terminal gõ lệnh SSH vào. Kỹ năng gõ lệnh trên Ubuntu, biết phân quyền thư mục chmod chown để app không bị lỗi Permission Denied, biết dùng lệnh tail -f để xem log lỗi thời gian thực... đó là ranh giới giữa một bạn chỉ biết gõ code ở trường và một kỹ sư thực thụ có thể vận hành được sản phẩm!">
+      <span class="slide-eyebrow eyebrow-cyan">🐧 HỆ ĐIỀU HÀNH MÁY CHỦ</span>
+      <h1 class="slide-title">Tại Sao Developer Nhất Định Phải Học Thêm Ubuntu?</h1>
+      <p class="slide-subtitle">95% máy chủ trên Internet chạy Linux. Kỹ năng vận hành sản phẩm thực tế bắt đầu từ đây.</p>
+
+      <div class="grid-2" style="margin-bottom: 14px;">
+        <div class="box-card" style="border-left: 4px solid #f97316;">
+          <h3 class="card-heading">Thực Tế Khác Biệt Giữa Máy Cá Nhân & Server</h3>
+          <ul class="card-desc" style="list-style-type: none; display: flex; flex-direction: column; gap: 10px; padding-left: 0; font-size: 0.84rem;">
+            <li>🖥️ <strong>Máy cá nhân (Local):</strong> Dùng chuột, giao diện đẹp (Windows / macOS), bấm nút Run là chạy.</li>
+            <li>☁️ <strong>Máy chủ (Production / Staging):</strong> <strong>Hoàn toàn không có giao diện đồ họa (No GUI)</strong>. 100% thao tác điều khiển thông qua màn hình dòng lệnh (Terminal / SSH).</li>
+            <li>🐳 <strong>Hệ sinh thái Docker & Cloud:</strong> Hầu hết container Docker và dịch vụ đám mây (AWS, GCP, DigitalOcean) đều tối ưu trên nhân Linux Ubuntu.</li>
+          </ul>
+        </div>
+
+        <div class="box-card box-card-highlight" style="border-left: 4px solid #38bdf8;">
+          <h3 class="card-heading">4 Kỹ Năng Sống Còn Khi Đụng Vào Ubuntu</h3>
+          <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.8rem;">
+            <div>
+              <span class="badge-pill pill-blue">1. Quản lý tiến trình & Dịch vụ</span>
+              <p class="card-desc" style="margin-top: 2px;">Khởi động lại Nginx, PHP-FPM, MySQL khi server bị treo (<code>systemctl restart nginx</code>).</p>
+            </div>
+            <div>
+              <span class="badge-pill pill-amber">2. Phân quyền file (chmod / chown)</span>
+              <p class="card-desc" style="margin-top: 2px;">Fix lỗi kinh điển <em>"Permission Denied"</em> khi deploy code lên server mà thư mục cache không ghi được.</p>
+            </div>
+            <div>
+              <span class="badge-pill pill-red">3. Soi Log sự cố thời gian thực</span>
+              <p class="card-desc" style="margin-top: 2px;">Dùng lệnh <code>tail -f /var/log/nginx/error.log</code> để bắt đúng lỗi lúc web bị sập giữa đêm.</p>
+            </div>
+            <div>
+              <span class="badge-pill pill-green">4. Tự động hóa với Cronjob</span>
+              <p class="card-desc" style="margin-top: 2px;">Lên lịch tự động chạy gửi email, quét đơn hàng, sao lưu database mỗi ngày.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="box-card" style="border-left: 4px solid #10b981; padding: 10px 14px;">
+        <strong style="color: #34d399;">💡 Lời khuyên cho Intern:</strong>
+        <span style="font-size: 0.82rem; color: #cbd5e1; margin-left: 8px;">Không cần thành chuyên gia Linux ngay, nhưng hãy tập làm quen với Terminal, dùng WSL2 (Windows Subsystem for Linux) hoặc cài Ubuntu trong Docker để không bị bỡ ngỡ khi ra dự án thật.</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 8: MySQL & INDEX Power -->
+    <div class="slide" data-slide="8" data-notes="Nói về MySQL. Anh hỏi em: Bảng Users có 10 người, bảng Orders chỉ có 3 người từng mua. Muốn in danh sách cả 10 người, ai chưa mua để trống thì dùng INNER hay LEFT JOIN? Nếu chọn INNER là mất 7 khách hàng! Phải dùng LEFT JOIN. Tiếp theo là INDEX. Hãy tưởng tượng cuốn từ điển 2.000 trang mà không có mục lục, muốn tìm chữ Success phải lật từ trang 1 đến 2.000, cái đó là Full Table Scan. Trong dự án thật, bảng đơn hàng có 2 triệu dòng. Không có Index thì query mất 4.5 giây, CPU 100% làm sập web. Khi đánh Index đúng chỗ, MySQL dùng cây B-Tree nhảy thẳng tới dữ liệu, thời gian giảm từ 4.5 giây xuống 3 mili-giây! Đó là đẳng cấp tối ưu.">
+      <span class="slide-eyebrow eyebrow-amber">🗄️ CƠ SỞ DỮ LIỆU THỰC CHIẾN</span>
+      <h1 class="slide-title">MySQL: Tư Duy An Toàn & Sức Mạnh INDEX</h1>
+      <p class="slide-subtitle">Cách tối ưu hiệu năng từ sập máy chủ xuống phản hồi trong 3 mili-giây.</p>
+
+      <div class="grid-2">
+        <div class="box-card">
+          <span class="badge-pill pill-blue">CÂU HỎI TƯƠNG TÁC</span>
+          <h3 class="card-heading" style="margin-top: 6px;">Em Hiểu Đúng Về Các Loại JOIN?</h3>
+          <p class="card-desc" style="font-size: 0.84rem;">
+            Cho bảng <strong>Users</strong> (10 người) và bảng <strong>Orders</strong> (chỉ có 3 người từng mua hàng).<br>
+            <em>Hỏi: Muốn in danh sách TẤT CẢ 10 người, ai chưa mua thì để tiền NULL/0, dùng JOIN nào?</em>
+          </p>
+          <div style="margin-top: 10px; font-size: 0.82rem; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px;">
+            ❌ <code>INNER JOIN</code>: Làm mất sạch 7 khách hàng tiềm năng!<br>
+            ✔ <code>LEFT JOIN</code>: Giữ trọn vẹn 10 người ở bảng bên trái.
+          </div>
+        </div>
+
+        <div class="box-card box-card-highlight">
+          <span class="badge-pill pill-green">BÀI TOÁN THỰC TẾ</span>
+          <h3 class="card-heading" style="margin-top: 6px;">Tối Ưu Bảng 2.000.000 Đơn Hàng</h3>
+          <p class="card-desc" style="font-size: 0.84rem;">Lọc đơn hàng theo <code>status = 'pending'</code> và <code>created_at</code>:</p>
+          
+          <div style="display: flex; gap: 12px; margin-top: 10px;">
+            <div style="flex: 1; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239,68,68,0.3); padding: 10px; border-radius: 8px;">
+              <div style="color: #f87171; font-weight: 700; font-size: 0.8rem;">CHƯA CÓ INDEX</div>
+              <div style="font-size: 1.4rem; font-weight: 800; color: #f87171; margin: 4px 0;">4.5 Giây</div>
+              <div style="font-size: 0.74rem; color: #94a3b8;">Full Table Scan quét 2 triệu dòng, CPU 100% sập server.</div>
+            </div>
+
+            <div style="flex: 1; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16,185,129,0.3); padding: 10px; border-radius: 8px;">
+              <div style="color: #34d399; font-weight: 700; font-size: 0.8rem;">CÓ COMPOSITE INDEX</div>
+              <div style="font-size: 1.4rem; font-weight: 800; color: #34d399; margin: 4px 0;">0.003 Giây</div>
+              <div style="font-size: 0.74rem; color: #94a3b8;">Duyệt cây B-Tree nhảy thẳng tới đích trong 3 mili-giây!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="box-card" style="margin-top: 14px; background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.25);">
+        <strong style="color: #f87171;">🛡️ Nguyên Tắc Sống Còn:</strong>
+        <span style="font-size: 0.85rem; color: #cbd5e1; margin-left: 8px;">Tuyệt đối không gõ <code>UPDATE</code>/<code>DELETE</code> thiếu <code>WHERE</code>. Luôn bọc trong <code>START TRANSACTION; ... COMMIT; / ROLLBACK;</code></span>
+      </div>
+    </div>
+
+    <!-- SLIDE 8.1: MySQL Transactions Deep Dive -->
+    <div class="slide" data-slide="8.1" data-notes="Bây giờ anh giải thích cho em một khái niệm cực kỳ quan trọng trong mọi hệ thống tài chính và thương mại: MySQL TRANSACTION. Hãy tưởng tượng tình huống chuyển tiền ngân hàng: Bạn A chuyển 1 triệu cho bạn B. Hệ thống phải chạy 2 câu lệnh UPDATE: 1 là trừ 1 triệu ở tài khoản A, 2 là cộng 1 triệu vào tài khoản B. Nếu không có Transaction, điều gì xảy ra nếu vừa chạy xong câu 1 trừ tiền A thì server bị cúp điện, đứt mạng trước khi chạy câu 2? Tiền của bạn A bốc hơi vào hư không, bạn B thì không nhận được, khách hàng sẽ kiện sập công ty! Transaction sinh ra để giải quyết đúng bài toán này. Nó hoạt động theo nguyên lý Tính Nguyên Tử - All or Nothing: Hoặc là cả hai câu lệnh cùng thành công thì mới COMMIT ghi vào ổ đĩa. Còn nếu có bất kỳ lỗi gì xảy ra ở giữa, lệnh ROLLBACK sẽ hoàn tác toàn bộ dữ liệu trở lại thời điểm ban đầu như chưa có gì xảy ra, tiền của A vẫn còn nguyên vẹn 100%! Đi làm, bất cứ chỗ nào đụng đến thanh toán, trừ kho hàng hay sửa data bằng tay trên DB, em bắt buộc phải bọc trong Transaction!">
+      <span class="slide-eyebrow eyebrow-amber">🛡️ AN TOÀN DỮ LIỆU CỐT LÕI</span>
+      <h1 class="slide-title">MySQL Transactions: Cơ Chế Sống Còn Bảo Vệ Dữ Liệu</h1>
+      <p class="slide-subtitle">Hiểu thấu bản chất <code>START TRANSACTION</code>, <code>COMMIT</code> và <code>ROLLBACK</code> qua bài toán ngân hàng.</p>
+
+      <div class="grid-2" style="margin-bottom: 12px;">
+        <!-- Cột Trái: Thảm họa khi không có Transaction -->
+        <div class="box-card" style="border-left: 4px solid #f43f5e;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+            <span class="badge-pill pill-red">THẢM HỌA: KHÔNG DÙNG TRANSACTION</span>
+          </div>
+          <p class="card-desc" style="font-size: 0.82rem; margin-bottom: 8px;">
+            Bài toán: <strong>Khách A chuyển 1.000.000đ cho Khách B</strong>
+          </p>
+          
+          <div class="terminal-box" style="margin: 0; background: #070a12;">
+            <div class="terminal-body" style="padding: 10px 12px; font-size: 0.76rem; line-height: 1.5;">
+              <span class="term-comment">-- Lệnh 1: Trừ tiền tài khoản A (Thành công)</span><br>
+              <span class="term-cmd">UPDATE</span> accounts <span class="term-cmd">SET</span> balance = balance - 1000000 <span class="term-cmd">WHERE</span> id = 'A';<br><br>
+              <span class="term-warn">⚡ SỰ CỐ: Cúp điện / Đứt mạng / Server crash!</span><br><br>
+              <span class="term-comment">-- Lệnh 2: Cộng tiền B CHƯA KỊP CHẠY!</span><br>
+              <span style="color: #64748b; text-decoration: line-through;">UPDATE accounts SET balance = balance + 1000000 WHERE id = 'B';</span>
+            </div>
+          </div>
+          <div style="font-size: 0.78rem; color: #f87171; margin-top: 8px;">
+            💥 <strong>Hậu quả:</strong> A bị trừ tiền nhưng B không nhận được. Tiền biến mất, sai lệch kế toán, khách hàng kiện cáo!
+          </div>
+        </div>
+
+        <!-- Cột Phải: Cơ chế an toàn tuyệt đối với Transaction -->
+        <div class="box-card box-card-highlight" style="border-left: 4px solid #10b981;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+            <span class="badge-pill pill-green">GIẢI PHÁP: BỌC TRONG TRANSACTION</span>
+          </div>
+          <p class="card-desc" style="font-size: 0.82rem; margin-bottom: 8px;">
+            Nguyên lý <strong>All or Nothing</strong> (Hoặc tất cả thành công, hoặc hủy hết):
+          </p>
+
+          <div class="terminal-box" style="margin: 0; background: #070a12;">
+            <div class="terminal-body" style="padding: 10px 12px; font-size: 0.76rem; line-height: 1.5;">
+              <span class="term-cmd">START TRANSACTION;</span> <span class="term-comment">-- 1. Mở chiếc hộp an toàn</span><br><br>
+              <span class="term-cmd">UPDATE</span> accounts <span class="term-cmd">SET</span> balance = balance - 1000000 <span class="term-cmd">WHERE</span> id = 'A';<br>
+              <span class="term-cmd">UPDATE</span> accounts <span class="term-cmd">SET</span> balance = balance + 1000000 <span class="term-cmd">WHERE</span> id = 'B';<br><br>
+              <span class="term-comment">-- Nếu CẢ HAI lệnh đều chạy trơn tru:</span><br>
+              <span class="term-success">COMMIT;</span> <span class="term-comment">-- 2. Ghi nhận vĩnh viễn vào ổ đĩa</span><br><br>
+              <span class="term-comment">-- Nếu CÓ BẤT KỲ LỖI GÌ xảy ra ở giữa:</span><br>
+              <span class="term-flag">ROLLBACK;</span> <span class="term-comment">-- 3. Hoàn tác sạch, tiền A vẫn còn nguyên!</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 Lệnh Vàng & Lời Khuyên Thực Chiến -->
+      <div class="grid-3" style="gap: 12px;">
+        <div class="box-card" style="padding: 10px 14px;">
+          <strong style="color: #38bdf8; font-size: 0.82rem;">1. START TRANSACTION</strong>
+          <p class="card-desc" style="font-size: 0.74rem; margin-top: 3px;">Tắt chế độ tự động lưu (autocommit). Toàn bộ các thay đổi chỉ ghi tạm vào bộ nhớ RAM.</p>
+        </div>
+        <div class="box-card" style="padding: 10px 14px;">
+          <strong style="color: #34d399; font-size: 0.82rem;">2. COMMIT</strong>
+          <p class="card-desc" style="font-size: 0.74rem; margin-top: 3px;">Xác nhận phiên giao dịch thành công mỹ mãn. Ghi dữ liệu chính thức xuống ổ đĩa cứng.</p>
+        </div>
+        <div class="box-card" style="padding: 10px 14px;">
+          <strong style="color: #f87171; font-size: 0.82rem;">3. ROLLBACK</strong>
+          <p class="card-desc" style="font-size: 0.74rem; margin-top: 3px;">Phao cứu sinh khi gặp lỗi: Hủy toàn bộ thao tác dở dang, đưa DB về đúng trạng thái ban đầu.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: Xdebug & Chrome DevTools -->
+    <div class="slide" data-slide="9" data-notes="Developer dành 70% thời gian là đọc và debug code. Tốc độ debug quyết định đẳng cấp của em. Đừng rải var_dump khắp nơi! Tuyệt chiêu Xdebug: Conditional Breakpoint. Trong vòng lặp 1.000 sản phẩm chỉ có món thứ 789 bị lỗi. Đặt điều kiện item->id == 789, Xdebug chạy vèo qua 788 món đầu, dừng phắt lại đúng lần thứ 789 để soi! Tuyệt chiêu Chrome DevTools: Replay XHR trong Network tab, click 1 cái là gửi lại request lỗi mà không cần điền lại form 15 ô. Tuyệt chiêu Event Listener Breakpoint: Click vào nút trên web, trình duyệt tự nhảy thẳng đến đúng dòng JS xử lý sự kiện đó!">
+      <span class="slide-eyebrow eyebrow-purple">🎯 NGHỆ THUẬT DEBUG ĐỈNH CAO</span>
+      <h1 class="slide-title">Tuyệt Chiêu Debug Siêu Tốc: Xdebug & Chrome DevTools</h1>
+      <p class="slide-subtitle">Thoát khỏi thói quen rải console.log/var_dump để bắt lỗi chính xác trong 3 phút.</p>
+
+      <div class="grid-2">
+        <div class="box-card" style="border-left: 4px solid #a855f7;">
+          <h3 class="card-heading">Xdebug (Backend / PHP)</h3>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 8px;">
+            <div>
+              <span class="badge-pill pill-purple">Conditional Breakpoint</span>
+              <p class="card-desc" style="margin-top: 3px; font-size: 0.82rem;">Bắt lỗi theo ID từ báo cáo của QA (<code>$id == 789</code>) hoặc bắt theo <strong>biểu hiện lỗi</strong> (<code>empty($item->price)</code>) mà không cần đoán trước ID!</p>
+            </div>
+            <div>
+              <span class="badge-pill pill-purple">Call Stack Inspection</span>
+              <p class="card-desc" style="margin-top: 3px; font-size: 0.82rem;">Nhìn thấu đường đi của request qua từng tầng: Route ➔ Middleware ➔ Controller ➔ Service ➔ DB.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="box-card" style="border-left: 4px solid #06b6d4;">
+          <h3 class="card-heading">Chrome DevTools (Frontend / JS)</h3>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 8px;">
+            <div>
+              <span class="badge-pill pill-blue">Conditional Breakpoint & Pause on Exceptions</span>
+              <p class="card-desc" style="margin-top: 3px; font-size: 0.82rem;">Đặt điều kiện <code>isNaN(item.price)</code> tự phanh đúng món lỗi, hoặc bật <em>Pause on Exceptions</em> để Chrome tự tóm sống dòng crash!</p>
+            </div>
+            <div>
+              <span class="badge-pill pill-blue">Replay XHR & Event Listeners</span>
+              <p class="card-desc" style="margin-top: 3px; font-size: 0.82rem;">Chuột phải Network chọn <em>Replay XHR</em> bắn lại request không cần gõ lại form. Dùng <em>Mouse Click</em> bắt quả tang code của nút bấm ẩn danh.</p>
+            </div>
+            <div style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(6, 182, 212, 0.3);">
+              <a href="demo_debug_javascript.html" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.4); border-radius: 6px; color: #22d3ee; font-size: 0.8rem; font-weight: 700; text-decoration: none; transition: all 0.2s;">
+                ⚡ Mở Lab Demo Thực Chiến DevTools (demo_debug_javascript.html) ➔
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9.1: PHP & Laravel Mastery -->
+    <div class="slide" data-slide="9.1" data-notes="Về ngôn ngữ PHP và Framework Laravel: Anh khuyên thật lòng là các em đừng vội học các package cao siêu hay học vẹt các cú pháp làm sẵn. Muốn giải quyết được các bài toán thực tế của công ty, em chỉ cần tập trung thật chắc vào 2 thứ: 1 là PHP Base: Nắm chắc hướng đối tượng OOP, Interface, Trait, Dependency Injection và viết Type Hinting chặt chẽ ở PHP 8. 2 là VÒNG ĐỜI CỦA 1 REQUEST trong Laravel: Một request từ trình duyệt bay tới máy chủ nó đi qua đâu? Từ public/index.php, vào HTTP Kernel, rồi các Service Provider khởi động, sau đó đi qua Router và Middleware lọc quyền Auth hoặc CORS, rồi mới tới Controller xử lý logic và trả về Response. Tại sao phải học vòng đời? Vì khi ứng dụng bị lỗi 401 không vào được trang, hoặc lỗi CORS, hoặc muốn gán dữ liệu người dùng toàn cục... nếu em hiểu vòng đời, em sẽ biết chính xác lỗi nằm ở Middleware hay Service Provider, chứ không phải đi bới tung từng dòng code trong Controller. Hãy học bản chất, đừng học ngọn!">
+      <span class="slide-eyebrow eyebrow-purple">🐘 PHP & LARAVEL CỐT LÕI</span>
+      <h1 class="slide-title">Làm Chủ PHP & Laravel: Nền Tảng & Request Lifecycle</h1>
+      <p class="slide-subtitle">Tập trung vào nền móng vững chắc và hiểu thấu vòng đời để giải quyết mọi bài toán thực tế.</p>
+
+      <div class="grid-2" style="margin-bottom: 12px;">
+        <!-- Cột Trái: PHP Base Cốt Lõi -->
+        <div class="box-card" style="border-left: 4px solid #818cf8;">
+          <h3 class="card-heading">1. Nền Móng PHP Base (Bắt Buộc Chắc)</h3>
+          <ul class="card-desc" style="list-style-type: none; display: flex; flex-direction: column; gap: 8px; padding-left: 0; font-size: 0.82rem;">
+            <li>🔹 <strong>OOP Hiện Đại:</strong> Hiểu rõ Interface (hợp đồng cam kết), Abstract Class, Trait (tái sử dụng code) và Dependency Injection (tiêm phụ thuộc).</li>
+            <li>🔹 <strong>PHP 8+ Strict Types:</strong> Luôn khai báo kiểu dữ liệu rõ ràng cho tham số và giá trị trả về (Type Hinting & Return Type) để code an toàn, không bị lỗi ngầm.</li>
+            <li>🔹 <strong>Exception Handling:</strong> Tư duy bắt và xử lý ngoại lệ bài bản bằng <code>try - catch - finally</code> thay vì để ứng dụng nổ tung văng lỗi trắng trang.</li>
+          </ul>
+        </div>
+
+        <!-- Cột Phải: Request Lifecycle -->
+        <div class="box-card box-card-highlight" style="border-left: 4px solid #f43f5e;">
+          <h3 class="card-heading">2. Vòng Đời Request Trong Laravel (Trục Xương Sống)</h3>
+          <p class="card-desc" style="font-size: 0.76rem; margin-bottom: 6px;">Hiểu luồng đi 6 bước của 1 request để bắt đúng bệnh:</p>
+          
+          <div style="background: #070a12; padding: 10px 12px; border-radius: 8px; font-family: var(--font-mono); font-size: 0.72rem; line-height: 1.6; color: #cbd5e1;">
+            <span style="color: #38bdf8;">1. public/index.php</span> ➔ Điểm đón request đầu tiên<br>
+            <span style="color: #818cf8;">2. HTTP Kernel</span> ➔ Khởi động hệ thống (Boots)<br>
+            <span style="color: #a855f7;">3. Service Providers</span> ➔ Đăng ký dịch vụ (Register & Boot)<br>
+            <span style="color: #fbbf24;">4. Routing & Middleware</span> ➔ Lọc bảo mật (Auth, CORS, RateLimit)<br>
+            <span style="color: #34d399;">5. Controller & FormRequest</span> ➔ Validate & Xử lý logic nghiệp vụ<br>
+            <span style="color: #f87171;">6. HTTP Response</span> ➔ Trả JSON hoặc View HTML về client
+          </div>
+        </div>
+      </div>
+
+      <!-- Checklist tự học thực tế -->
+      <div class="box-card" style="padding: 10px 14px; background: rgba(255,255,255,0.02);">
+        <div style="font-size: 0.8rem; font-weight: 700; color: #e2e8f0; margin-bottom: 4px;">🎯 Checklist Những Gì Cần Học Tiếp Theo Để Làm Được Việc:</div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <span class="badge-pill pill-blue">Eloquent ORM & Relationship</span>
+          <span class="badge-pill pill-green">Eager Loading tránh lỗi N+1 Query</span>
+          <span class="badge-pill pill-amber">Database Migrations & Seeders</span>
+          <span class="badge-pill pill-purple">Service Layer / Repository Pattern</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9.2: Real World OOP -->
+    <div class="slide" data-slide="9.2" data-notes="Bây giờ anh nói về 4 tính chất cốt lõi của OOP. Ở trường, thầy cô dạy em lớp Động vật có con Chó kêu Gâu gâu, con Mèo kêu Meo meo làm em bị xa rời thực tế! Đi làm, em chỉ cần hiểu 4 tính chất này qua bài toán web: Thứ 1 là ĐÓNG GÓI - giấu dữ liệu mật. Thuộc tính $password hay số dư $balance phải để private, muốn sửa phải gọi hàm changePassword() hay withdraw(), không cho ai tự tiện gán giá trị bừa bãi. Thứ 2 là KẾ THỪA - tái sử dụng code. Class User có name, email; class Admin và Customer kế thừa lại mà không cần gõ lại từ đầu. Thứ 3 là ĐA HÌNH - cùng 1 hàm nhưng xử lý khác nhau. Cùng gọi hàm pay(), nhưng cổng VNPay thì quét QR, cổng COD thì thu tiền mặt. Thứ 4 là TRỪU TƯỢNG - giấu đi sự phức tạp. Hàm sendNotification() chỉ cần gọi là xong, không cần bận tâm bên dưới nó chạy cổng mạng nào. Hiểu 4 tính chất này là em tự tin làm việc với mọi framework!">
+      <span class="slide-eyebrow eyebrow-purple">⚡ HƯỚNG ĐỐI TƯỢNG THỰC TẾ</span>
+      <h1 class="slide-title">OOP Thực Chiến: 4 Tính Chất Cốt Lõi Qua Ví Dụ Web</h1>
+      <p class="slide-subtitle">Thoát khỏi lý thuyết "Chó & Mèo" giáo điều, hiểu bản chất 4 tính chất qua nghiệp vụ thực tế.</p>
+
+      <div class="grid-2" style="margin-bottom: 12px;">
+        <div class="box-card" style="border-left: 4px solid #818cf8;">
+          <h3 class="card-heading">1. Tính Đóng Gói & 2. Tính Kế Thừa</h3>
+          <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.81rem; margin-top: 6px;">
+            <div>
+              <span class="badge-pill pill-blue">1. Tính Đóng Gói (Encapsulation)</span>
+              <p class="card-desc" style="margin-top: 3px;">Giấu dữ liệu nhạy cảm. Thuộc tính <code>$password</code>, <code>$balance</code> để <code>private</code>. Muốn sửa phải qua hàm <code>changePassword()</code> hoặc <code>withdraw()</code>, cấm tự tiện sửa <code>$user->balance = 999999999</code>.</p>
+            </div>
+            <div>
+              <span class="badge-pill pill-green">2. Tính Kế Thừa (Inheritance)</span>
+              <p class="card-desc" style="margin-top: 3px;">Tái sử dụng code thông minh. Class cha <code>User</code> có <code>name</code>, <code>email</code>. Các class con <code>Admin</code> và <code>Customer</code> kế thừa lại toàn bộ, chỉ viết thêm quyền hạn riêng.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="box-card box-card-highlight" style="border-left: 4px solid #38bdf8;">
+          <h3 class="card-heading">3. Tính Đa Hình & 4. Tính Trừu Tượng</h3>
+          <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.81rem; margin-top: 6px;">
+            <div>
+              <span class="badge-pill pill-purple">3. Tính Đa Hình (Polymorphism)</span>
+              <p class="card-desc" style="margin-top: 3px;">Cùng 1 tên hàm nhưng xử lý khác nhau. Gọi <code>$payment->pay()</code>: Cổng <code>VNPay</code> thì quét QR, cổng <code>COD</code> thì in phiếu thu tiền mặt. Không cần viết 10 cái <code>if/else</code>!</p>
+            </div>
+            <div>
+              <span class="badge-pill pill-amber">4. Tính Trừu Tượng (Abstraction)</span>
+              <p class="card-desc" style="margin-top: 3px;">Giấu kín sự phức tạp bên dưới. Gọi hàm <code>sendNotification()</code> là thông báo bay đi, không cần bận tâm bên dưới nó kết nối cổng mạng hay mã hóa thế nào.</p>
+            </div>
+          </div>
+          <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 8px 12px; margin-top: 10px; font-size: 0.76rem; color: #a5b4fc;">
+            💡 <strong>Tư duy đi làm:</strong> Trường học dạy OOP để thi cử; Doanh nghiệp dùng OOP để khi yêu cầu thay đổi, chỉ cần viết thêm Class mới chứ không đập phá code cũ!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9.3: Cookie vs Session -->
+    <div class="slide" data-slide="9.3" data-notes="Bây giờ anh giải thích Cookie và Session qua 2 ví dụ cực kỳ đơn giản mà em gặp hàng ngày. Vì mạng HTTP vốn dĩ không có trí nhớ, mỗi lần tải trang server coi em như người lạ. Vậy làm sao server nhớ được em? Ví dụ 1 là Giỏ hàng mua sắm: Em chưa đăng nhập nhưng chọn 2 cái áo, mẩu Cookie nhỏ trên trình duyệt lưu mã giỏ hàng, hôm sau mở máy lên hàng vẫn còn đó. Ví dụ 2 là Đăng nhập Facebook hay Shopee: Em đăng nhập xong, server tạo 1 Session lưu trạng thái em đã đăng nhập, rồi phát cho trình duyệt 1 mẩu Cookie chứa mã số phiên. Lần sau mở tab mới, trình duyệt tự chìa Cookie ra là vào thẳng trang cá nhân, không cần gõ lại mật khẩu. Nó giống hệt em đi siêu thị: Tủ gửi đồ bên trong là Session an toàn trên Server, còn thẻ số em cầm về túi là Cookie ở trình duyệt. Nhớ nhé: Không bao giờ lưu mật khẩu vào Cookie, và luôn bật cờ HttpOnly để không bị hacker đọc trộm!">
+      <span class="slide-eyebrow eyebrow-cyan">🔑 CƠ CHẾ XÁC THỰC WEB</span>
+      <h1 class="slide-title">Cookie & Session: Bản Chất Dễ Hiểu Qua 2 Ví Dụ Đời Thực</h1>
+      <p class="slide-subtitle">Giải mã cách máy chủ nhận diện và ghi nhớ thông tin người dùng trên giao thức Stateless HTTP.</p>
+
+      <div class="grid-2" style="margin-bottom: 12px;">
+        <div class="box-card" style="border-left: 4px solid #f59e0b;">
+          <h3 class="card-heading">2 Ví Dụ Đời Thường Gặp Hàng Ngày</h3>
+          <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.81rem; margin-top: 6px;">
+            <div style="background: rgba(0,0,0,0.25); padding: 8px 10px; border-radius: 8px;">
+              <strong style="color: #38bdf8;">🛒 Ví dụ 1: Giỏ Hàng Mua Sắm (Cookie)</strong>
+              <p class="card-desc" style="font-size: 0.76rem; margin-top: 2px;">Chưa đăng nhập nhưng bấm thêm 2 cái áo. Cookie trên trình duyệt lưu mã giỏ hàng. Tắt máy đi ngủ, hôm sau mở lại 2 cái áo vẫn còn nguyên!</p>
+            </div>
+            <div style="background: rgba(0,0,0,0.25); padding: 8px 10px; border-radius: 8px;">
+              <strong style="color: #34d399;">🔑 Ví dụ 2: Ghi Nhớ Đăng Nhập (Session + Cookie)</strong>
+              <p class="card-desc" style="font-size: 0.76rem; margin-top: 2px;">Đăng nhập thành công, Server tạo Session lưu thông tin. Trình duyệt nhận Cookie chứa <code>session_id</code>. Lần sau mở tab mới tự vào thẳng, không cần gõ lại mật khẩu.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="box-card box-card-highlight" style="border-left: 4px solid #10b981;">
+          <h3 class="card-heading">Mô Hình Tủ Đồ & 3 Cờ Bảo Mật Cookie</h3>
+          <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.8rem; margin-top: 6px;">
+            <p class="card-desc" style="font-size: 0.76rem; margin-bottom: 4px;">
+              📦 <strong>Session:</strong> Tủ đồ an toàn ở máy chủ (Server).<br>
+              🎫 <strong>Cookie:</strong> Thẻ số chìa khóa nhét túi quần (Trình duyệt).
+            </p>
+            <div>
+              <span class="badge-pill pill-red">1. HttpOnly</span>
+              <span class="card-desc" style="font-size: 0.75rem; margin-left: 6px;">Cấm JavaScript đọc Cookie, chặn đứng hacker chôm tài khoản qua XSS.</span>
+            </div>
+            <div>
+              <span class="badge-pill pill-blue">2. Secure</span>
+              <span class="card-desc" style="font-size: 0.75rem; margin-left: 6px;">Chỉ gửi qua HTTPS an toàn, chống nghe lén Wi-Fi công cộng.</span>
+            </div>
+            <div>
+              <span class="badge-pill pill-amber">3. SameSite</span>
+              <span class="card-desc" style="font-size: 0.75rem; margin-left: 6px;">Chống web lừa đảo bên ngoài gửi trộm request (chống CSRF).</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10: Postman & Jira -->
+    <div class="slide" data-slide="10" data-notes="Trường học không dạy nhưng công ty nào cũng bắt dùng: Postman và Jira. Với Postman: Đừng chỉ gõ link rồi bấm Send. 1 là tạo Environments với biến {{base_url}} để đổi giữa Local, Staging, Prod trong 1 giây. 2 là Kỹ năng Import & Export: Export Collection v2.1 để commit vào Git hoặc share cho Frontend/QA; Import cURL từ tab Network trên Chrome để tái hiện request lỗi trong 2 giây mà không cần tạo thủ công; Import Swagger/OpenAPI spec tự sinh toàn bộ endpoints. Lưu ý sống còn: Khi export Environment, chỉ để URL ở Initial Value, tuyệt đối không để lộ Token/Secret kẻo commit lên Git công khai! Với Jira: Nhận task chuyển In Progress, hoàn thành chuyển Code Review. Khai báo Log Work trung thực. Và quy tắc vàng: Comment lưu vết. Mọi thỏa thuận thay đổi logic với Backend hay Designer đều phải comment ghi chú trên ticket!">
+      <span class="slide-eyebrow eyebrow-indigo">🤝 BỘ ĐÔI GIAO TIẾP DỰ ÁN</span>
+      <h1 class="slide-title">Postman & Jira: Tác Phong Làm Việc Chuyên Nghiệp</h1>
+      <p class="slide-subtitle">Chuẩn hóa cách kiểm thử độc lập và quản trị tiến độ công việc hàng ngày.</p>
+
+      <div class="grid-2">
+        <div class="box-card">
+          <span class="badge-pill pill-amber">POSTMAN</span>
+          <h3 class="card-heading" style="margin-top: 6px;">Cầu Nối Độc Lập Frontend & Backend</h3>
+          <ul class="card-desc" style="list-style-type: none; display: flex; flex-direction: column; gap: 8px; padding-left: 0; margin-top: 6px; font-size: 0.81rem;">
+            <li>🔸 <strong>Environments <code>{{base_url}}</code>:</strong> Đổi môi trường Local, Staging, Prod trong 1 click chuột thay vì sửa từng link API.</li>
+            <li>🔸 <strong>Test API độc lập:</strong> Luôn dùng Postman gọi thử API xem cấu trúc JSON trước khi viết code giao diện.</li>
+            <li>🔸 <strong>Sandbox Luyện Tập:</strong> Thực hành test GET/POST/Auth qua <a href="https://postman-echo.com" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: underline; font-weight: 700;">https://postman-echo.com ↗</a></li>
+            <li>🔸 <strong>Kỹ Năng Import/Export:</strong> Export Collection commit vào Git; Import cURL từ Chrome Network hoặc Swagger spec tự sinh hàng loạt endpoint trong 2 giây.</li>
+            <li>🔸 <strong>Export cURL & Code Snippet:</strong> Xuất request thành mã cURL, JS Fetch, PHP Guzzle đính kèm ticket bug trên Jira.</li>
+          </ul>
+        </div>
+
+        <div class="box-card">
+          <span class="badge-pill pill-blue">JIRA / REDMINE</span>
+          <h3 class="card-heading" style="margin-top: 6px;">Tác Phong Kỹ Sư Trưởng Thành</h3>
+          <ul class="card-desc" style="list-style-type: none; display: flex; flex-direction: column; gap: 10px; padding-left: 0; margin-top: 6px;">
+            <li>🔹 <strong>Cập nhật trạng thái ticket:</strong> Nhận việc chuyển <code>In Progress</code>, code xong chuyển <code>Code Review</code>. Không để dồn cả tuần!</li>
+            <li>🔹 <strong>Log Work hàng ngày:</strong> Khai báo thời gian làm việc trung thực, đây là căn cứ tính hiệu suất.</li>
+            <li>🔹 <strong>Comment lưu vết:</strong> Mọi thỏa thuận thay đổi specs đều phải comment trên ticket, không nói mồm qua chat.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10.1: Webhook Concepts & 2 Real World Examples -->
+    <div class="slide" data-slide="10.1" data-notes="Khái niệm tiếp theo mà dự án nào cũng dùng nhưng sinh viên hay mơ hồ: WEBHOOK. Webhook khác gì API bình thường? API bình thường giống như Polling: Em ngồi chờ người yêu và cứ 5 giây lại nhắn tin hỏi: 'Em đến chưa? Em đến chưa?'. Rất tốn tin nhắn và mệt mỏi! Còn Webhook là cơ chế Bắn Sự Kiện (Event-driven): Em dặn người yêu là: 'Khi nào em đến đầu ngõ thì em bấm chuông gọi anh, anh chạy ra đón!'. Ở các hệ thống bên thứ ba, khi có sự việc gì xảy ra, máy chủ của họ sẽ chủ động bắn một request HTTP POST sang đường dẫn API của website mình để báo tin. Ví dụ 1 kinh điển là Cổng thanh toán VNPay hay MoMo: Khách quét mã QR trừ tiền xong, VNPay tự động bắn Webhook sang website của em, hệ thống em nhận được tin là tự động đổi trạng thái đơn sang 'Đã thanh toán' ngay lập tức. Ví dụ 2 là GitHub và Slack: Khi em đẩy code lên GitHub, GitHub bắn Webhook báo vào kênh chat Slack của team: 'Bạn Nam vừa đẩy code, mời review!'. Rất trực quan và tự động hóa cao!">
+      <span class="slide-eyebrow eyebrow-cyan">⚡ CƠ CHẾ GIAO TIẾP TỰ ĐỘNG</span>
+      <h1 class="slide-title">Hiểu Nhanh Về Webhook: Cơ Chế Bắn Sự Kiện (Event-Driven)</h1>
+      <p class="slide-subtitle">Phân biệt bản chất với API thông thường và 2 ứng dụng kinh điển trong dự án thực tế.</p>
+
+      <div class="grid-2" style="margin-bottom: 12px;">
+        <div class="box-card" style="border-left: 4px solid #f59e0b;">
+          <span class="badge-pill pill-amber">HỎI LIÊN TỤC (POLLING)</span>
+          <p class="card-desc" style="margin-top: 6px; font-size: 0.82rem;">
+            Phía client cứ mỗi 5 giây lại gửi request hỏi server: <em>"Có dữ liệu mới chưa? Có chưa? Có chưa?"</em><br>
+            ❌ Tốn băng thông mạng, lãng phí tài nguyên CPU máy chủ khi không có dữ liệu mới.
+          </p>
+        </div>
+
+        <div class="box-card box-card-highlight" style="border-left: 4px solid #10b981;">
+          <span class="badge-pill pill-green">BẮN SỰ KIỆN (WEBHOOK)</span>
+          <p class="card-desc" style="margin-top: 6px; font-size: 0.82rem;">
+            Hệ thống dặn bên thứ ba: <em>"Khi nào có sự kiện xảy ra thì hãy tự động gọi vào link API này của tao!"</em><br>
+            ✔ Real-time tức thì, chỉ gửi dữ liệu khi có sự kiện thực sự phát sinh trên hệ thống.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Ví dụ 1: Cổng thanh toán -->
+        <div class="box-card">
+          <div style="font-size: 0.84rem; font-weight: 700; color: #38bdf8; margin-bottom: 6px;">💳 VÍ DỤ 1: CỔNG THANH TOÁN (VNPAY / MOMO / STRIPE)</div>
+          <p class="card-desc" style="font-size: 0.8rem; line-height: 1.55;">
+            1. Khách hàng quét mã QR trên ứng dụng ngân hàng và bấm chuyển tiền.<br>
+            2. Ngân hàng trừ tiền thành công, máy chủ <strong>VNPay tự động bắn 1 request Webhook (POST)</strong> chứa mã đơn hàng sang API <code>/api/webhook/vnpay-callback</code> trên server công ty em.<br>
+            3. Server của em kiểm tra chữ ký bảo mật và <strong>tự động chuyển đơn hàng sang 'ĐÃ THANH TOÁN' trong 1 giây</strong> mà khách không cần làm thêm gì!
+          </p>
+        </div>
+
+        <!-- Ví dụ 2: CI/CD & Slack Notification -->
+        <div class="box-card">
+          <div style="font-size: 0.84rem; font-weight: 700; color: #a855f7; margin-bottom: 6px;">🚀 VÍ DỤ 2: TỰ ĐỘNG HÓA CI/CD & THÔNG BÁO SLACK</div>
+          <p class="card-desc" style="font-size: 0.8rem; line-height: 1.55;">
+            1. Em vừa hoàn thành tính năng và nhấn nút <strong>Tạo Pull Request trên GitHub</strong>.<br>
+            2. GitHub kích hoạt Webhook, <strong>bắn thông báo sự kiện sang máy chủ CI/CD</strong> (Jenkins/GitHub Actions) để tự động chạy linter và unit test.<br>
+            3. Đồng thời, GitHub bắn Webhook sang <strong>kênh chat Slack / Telegram của team</strong>: <em>"📢 Intern vừa tạo PR #101, kính mời Tech Lead vào review!"</em>.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10.2: Queue & Job -->
+    <div class="slide" data-slide="10.2" data-notes="Một kỹ năng kiến trúc sống còn ở các công ty lớn: QUEUE và JOB - Xử lý bất đồng bộ ở hậu trường. Hãy tưởng tượng tình huống này: Khách hàng bấm nút Đặt hàng trên website. Để hoàn tất, hệ thống phải làm 4 việc: 1 là ghi đơn vào Database mất 50 mili-giây, 2 là gửi email xác nhận mất 3 giây, 3 là nén file PDF hóa đơn mất 2 giây, 4 là gửi tin nhắn SMS mất 2 giây. Nếu em xử lý đồng bộ - tức là bắt khách hàng ngồi chờ làm xong cả 4 việc đó - thì màn hình của khách sẽ quay mòng mòng đơ hơn 7 giây! Khách hàng sẽ tưởng web bị lỗi và bấm F5 hoặc thoát trang. Giải pháp kiến trúc của Senior là dùng QUEUE và JOB. Giống hệt như quán trà sữa: Em đến quầy thu ngân gọi món, bạn thu ngân chỉ mất 5 giây thu tiền và in cho em tờ hóa đơn có số thứ tự. Đó là luồng HTTP Request, trả về cho khách ngay trong 100 mili-giây: 'Đặt hàng thành công!'. Còn việc pha trà sữa, đóng gói đá, dán tem - đó là những tác vụ nặng được gói thành JOB ném vào hàng đợi QUEUE. Ở đằng sau, các bạn nhân viên pha chế - tức là các QUEUE WORKER - sẽ lần lượt rút từng ly ra làm ngầm ở hậu trường! 3 ví dụ kinh điển bắt buộc phải dùng Queue: 1 là gửi Email và tin nhắn OTP; 2 là nén ảnh và tạo thumbnail khi user upload; 3 là xuất file Excel báo cáo hàng chục nghìn dòng. Hiểu và áp dụng được Queue là em đã vượt xa tầm một bạn sinh viên mới ra trường!">
+      <span class="slide-eyebrow eyebrow-amber">⚡ TỐI ƯU HIỆU NĂNG HỆ THỐNG</span>
+      <h1 class="slide-title">Queue & Job: Nghệ Thuật Xử Lý Bất Đồng Bộ (Background Jobs)</h1>
+      <p class="slide-subtitle">Giải phóng máy chủ khỏi tình trạng nghẽn đơ, rút ngắn phản hồi API từ 7 giây xuống 100 mili-giây.</p>
+
+      <div class="grid-2" style="margin-bottom: 12px;">
+        <div class="box-card" style="border-left: 4px solid #f43f5e;">
+          <span class="badge-pill pill-red">ĐỒNG BỘ: BẮT KHÁCH CHỜ 7S</span>
+          <p class="card-desc" style="font-size: 0.81rem; margin-top: 6px;">
+            Khách bấm <em>"Đặt Hàng"</em> ➔ Server làm tuần tự: Ghi DB (50ms) + Gửi mail (3s) + Xuất PDF (2s) + Bắn SMS (2s).<br>
+            💥 <strong>Hậu quả:</strong> Màn hình quay đơ hơn 7 giây! Khách sốt ruột F5 liên tục gây quá tải sập server.
+          </p>
+        </div>
+
+        <div class="box-card box-card-highlight" style="border-left: 4px solid #10b981;">
+          <span class="badge-pill pill-green">BẤT ĐỒNG BỘ: TRẢ VỀ TRONG 100MS</span>
+          <p class="card-desc" style="font-size: 0.81rem; margin-top: 6px;">
+            Server chỉ ghi DB trong 50ms ➔ Báo ngay <strong>"Đặt hàng thành công!"</strong>.<br>
+            ✔ Đẩy các tác vụ nặng thành <strong>Job</strong> vào hàng đợi <strong>Queue (Redis)</strong>. Đội ngũ <strong>Queue Worker</strong> âm thầm xử lý ngầm ở hậu trường!
+          </p>
+        </div>
+      </div>
+
+      <div class="grid-3" style="gap: 12px;">
+        <div class="box-card" style="padding: 12px;">
+          <div style="font-size: 0.82rem; font-weight: 700; color: #38bdf8; margin-bottom: 4px;">📧 1. Gửi Email / SMS OTP</div>
+          <p class="card-desc" style="font-size: 0.75rem; line-height: 1.5;">Phụ thuộc dịch vụ bên thứ 3 (SendGrid/Twilio). Đẩy vào Queue giúp tự động thử lại (Retry) khi rớt mạng mà không làm lỗi luồng người dùng.</p>
+        </div>
+        <div class="box-card" style="padding: 12px;">
+          <div style="font-size: 0.82rem; font-weight: 700; color: #a855f7; margin-bottom: 4px;">🖼️ 2. Nén & Cắt Ảnh / Video</div>
+          <p class="card-desc" style="font-size: 0.75rem; line-height: 1.5;">User đăng tải ảnh 10MB ➔ Server nhận file xong là xong. Job ngầm tự động nén, cắt ảnh thành 3 kích cỡ (thumbnail, medium, full HD).</p>
+        </div>
+        <div class="box-card" style="padding: 12px;">
+          <div style="font-size: 0.82rem; font-weight: 700; color: #fbbf24; margin-bottom: 4px;">📊 3. Xuất Báo Cáo Excel Nặng</div>
+          <p class="card-desc" style="font-size: 0.75rem; line-height: 1.5;">Báo cáo 50.000 đơn hàng mất 30 giây để xử lý. Job ngầm tạo file xong sẽ tự động bắn link tải qua email hoặc chuông thông báo.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 11: Scenario 1 (Onboarding) -->
+    <div class="slide" data-slide="11" data-notes="Bây giờ ráp tất cả vũ khí vào trận đánh thực tế. Kịch bản 1 lúc 9h sáng ngày đầu: Em clone dự án về nhưng gõ lệnh chạy báo lỗi đỏ lòm. Đừng kéo áo Senior kêu khóc! Mở README.md đọc trước, dùng nvm use đúng bản Node, gõ docker compose up -d để dựng DB trong 30 giây, copy file .env.example sang .env rồi chạy migration nạp data mẫu. 15 phút sau app chạy êm ru, Mentor nhìn vào sẽ thấy ngay: Bạn này rất tự lập và có tư duy tốt!">
+      <span class="slide-eyebrow eyebrow-emerald">⚔️ CHUYÊN ĐỀ 3: 4 TÌNH HUỐNG THỰC TẾ</span>
+      <h1 class="slide-title">Kịch Bản 1: Onboarding Dự Án Ngày Đầu Tiên (9h00 Sáng)</h1>
+      <p class="slide-subtitle">Từ chiếc máy trống trơn đến ứng dụng chạy mượt mà không làm phiền ai.</p>
+
+      <div class="grid-4" style="margin-top: 10px;">
+        <div class="box-card">
+          <div style="font-family: var(--font-mono); color: #818cf8; font-weight: 800; font-size: 1.2rem;">01</div>
+          <h4 class="card-heading" style="font-size: 0.92rem;">Đọc README.md</h4>
+          <p class="card-desc" style="font-size: 0.78rem;">Đọc kỹ tài liệu hướng dẫn cài đặt của dự án trước khi đặt bất kỳ câu hỏi nào.</p>
+        </div>
+        <div class="box-card">
+          <div style="font-family: var(--font-mono); color: #38bdf8; font-weight: 800; font-size: 1.2rem;">02</div>
+          <h4 class="card-heading" style="font-size: 0.92rem;">Chuẩn Hóa Node</h4>
+          <p class="card-desc" style="font-size: 0.78rem;">Gõ <code>nvm use 18</code> để switch đúng phiên bản runtime mà dự án yêu cầu.</p>
+        </div>
+        <div class="box-card">
+          <div style="font-family: var(--font-mono); color: #34d399; font-weight: 800; font-size: 1.2rem;">03</div>
+          <h4 class="card-heading" style="font-size: 0.92rem;">Bật Docker</h4>
+          <p class="card-desc" style="font-size: 0.78rem;">Chạy <code>docker compose up -d</code> khởi động MySQL và Redis ngầm trong 30 giây.</p>
+        </div>
+        <div class="box-card">
+          <div style="font-family: var(--font-mono); color: #fbbf24; font-weight: 800; font-size: 1.2rem;">04</div>
+          <h4 class="card-heading" style="font-size: 0.92rem;">Env & Migration</h4>
+          <p class="card-desc" style="font-size: 0.78rem;">Tạo file <code>.env</code>, chạy migration và seeder nạp dữ liệu mẫu vào DB.</p>
+        </div>
+      </div>
+
+      <div class="box-card" style="margin-top: 18px; border-left: 4px solid #10b981;">
+        <strong style="color: #34d399;">🎯 Kết quả:</strong>
+        <span style="font-size: 0.88rem; color: #cbd5e1; margin-left: 8px;">Dự án chạy hoàn hảo sau 15 phút mà không cần kéo áo nhờ vả ai. Ghi điểm tuyệt đối trong mắt Tech Lead!</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 12: Scenario 2 (New Feature from Figma & 4 UI States) -->
+    <div class="slide" data-slide="12" data-notes="11h trưa: Được giao làm màn hình Lịch sử đơn hàng từ Figma. Sinh viên thường chỉ code đúng trường hợp có dữ liệu (Happy Path) là vội nộp bài. Nhưng một Senior sẽ luôn xử lý trọn vẹn 4 TRẠNG THÁI MÀN HÌNH: 1 là Loading: Không bao giờ để màn hình trắng đơ, phải có Skeleton shimmer để người dùng hình dung bố cục. Và đặc biệt: Bắt buộc phải disable nút bấm khi đang submit form để ngăn khách hàng sốt ruột bấm 3 lần liên tiếp sinh ra 3 đơn hàng trùng nhau! 2 là Success: Dữ liệu phải format sạch sẽ, tiền tệ có dấu phẩy ngăn cách hàng nghìn (1.000.000 đ), ngày giờ theo múi giờ địa phương, chữ dài phải cắt bằng dấu ba chấm text-ellipsis. 3 là Empty State: Đây là mỏ vàng trải nghiệm, đừng để cái bảng trắng trơn vô hồn! Phải có hình vẽ dễ thương kèm thông báo: 'Bạn chưa có đơn hàng nào', và quan trọng nhất là phải có Nút Kêu Gọi Hành Động (CTA): 'Khám phá sản phẩm ngay' để dẫn dắt khách đi mua sắm tiếp. 4 là Error State: Nếu đứt mạng hay server 500, cấm quăng mã lỗi kỹ thuật khó hiểu vào mặt người dùng. Phải hiện thông báo lịch sự bằng tiếng Việt và luôn cung cấp nút Thử lại hoặc Về trang chủ. Làm đủ 4 trạng thái này, Tester không bao giờ bắt bẻ được em!">
+      <span class="slide-eyebrow eyebrow-cyan">⚔️ TÌNH HUỐNG THỰC TẾ 2</span>
+      <h1 class="slide-title">Kịch Bản 2: Phát Triển Tính Năng & Tư Duy 4 Trạng Thái UI</h1>
+      <p class="slide-subtitle">Thước đo phân loại Senior: Không chỉ làm đúng Happy Path mà phải bảo vệ toàn vẹn trải nghiệm.</p>
+
+      <div class="grid-2" style="margin-bottom: 12px;">
+        <div class="box-card" style="border-left: 4px solid #818cf8;">
+          <h3 class="card-heading">3 Bước Chuẩn Bị Bắt Buộc Trước Khi Gõ Code</h3>
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px; font-size: 0.82rem;">
+            <div>
+              <span class="badge-pill pill-blue">1. Nhánh Git riêng biệt</span>
+              <p class="card-desc" style="margin-top: 2px;"><code>git checkout -b feature/ORDER-101-history</code>. Cấm kỵ code đè lên develop!</p>
+            </div>
+            <div>
+              <span class="badge-pill pill-purple">2. Figma Dev Mode</span>
+              <p class="card-desc" style="margin-top: 2px;">Đo khoảng cách px, mã màu hex, font size chuẩn xác; export icon chuẩn SVG vector.</p>
+            </div>
+            <div>
+              <span class="badge-pill pill-amber">3. Postman Test Độc Lập</span>
+              <p class="card-desc" style="margin-top: 2px;">Gọi thử API Backend, hiểu rõ cấu trúc JSON trả về trước khi bắt tay viết giao diện.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="box-card box-card-highlight" style="border-left: 4px solid #38bdf8;">
+          <h3 class="card-heading">Tư Duy Cốt Lõi Về 4 Trạng Thái Màn Hình (UI States)</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px;">
+            <div style="background: rgba(0,0,0,0.3); padding: 8px 10px; border-radius: 8px;">
+              <strong style="color: #38bdf8; font-size: 0.8rem;">1. LOADING STATE</strong>
+              <p class="card-desc" style="font-size: 0.72rem; margin-top: 2px;">• Skeleton Shimmer tránh màn hình đơ trắng.<br>• <strong>Disable nút submit</strong> chống double-click gửi trùng đơn hàng!</p>
+            </div>
+            <div style="background: rgba(0,0,0,0.3); padding: 8px 10px; border-radius: 8px;">
+              <strong style="color: #34d399; font-size: 0.8rem;">2. SUCCESS / DATA</strong>
+              <p class="card-desc" style="font-size: 0.72rem; margin-top: 2px;">• Format tiền tệ <code>1.000.000 đ</code>.<br>• Múi giờ địa phương.<br>• Xử lý text dài bằng <code>ellipsis (...)</code>.</p>
+            </div>
+            <div style="background: rgba(0,0,0,0.3); padding: 8px 10px; border-radius: 8px;">
+              <strong style="color: #fbbf24; font-size: 0.8rem;">3. EMPTY STATE</strong>
+              <p class="card-desc" style="font-size: 0.72rem; margin-top: 2px;">• Mỏ vàng trải nghiệm: Hình minh họa thân thiện.<br>• <strong>Nút Call-to-Action (CTA):</strong> <em>[Mua sắm ngay]</em> giữ chân khách hàng.</p>
+            </div>
+            <div style="background: rgba(0,0,0,0.3); padding: 8px 10px; border-radius: 8px;">
+              <strong style="color: #f87171; font-size: 0.8rem;">4. ERROR STATE</strong>
+              <p class="card-desc" style="font-size: 0.72rem; margin-top: 2px;">• Không quăng mã lỗi kỹ thuật 500.<br>• Thông báo lịch sự bằng tiếng Việt kèm nút <em>[Thử lại]</em> hoặc <em>[Về trang chủ]</em>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 13: Scenario 3 (Hotfix with Xdebug) -->
+    <div class="slide" data-slide="13" data-notes="14h30 chiều: QA báo nút Hủy đơn hàng bị lỗi 500 chết cứng trên Staging. Đừng toát mồ hôi ngồi đoán mò! Bật Network Tab xem API nào lỗi, lấy payload. Mở IDE cắm Breakpoint Xdebug ở Controller hủy đơn. Dùng Replay XHR bắn lại request để kích hoạt Xdebug. Nhìn vào biến thấy ngay: user_id bị null ở đơn hàng cũ, gọi hàm trên null nên PHP báo Fatal Error. Thêm kiểm tra điều kiện an toàn, test lại trả về 200 xanh lét. Tìm và sửa lỗi xong trong đúng 10 phút!">
+      <span class="slide-eyebrow eyebrow-rose">⚔️ TÌNH HUỐNG THỰC TẾ 3</span>
+      <h1 class="slide-title">Kịch Bản 3: Truy Vết Lỗi Khẩn Cấp Bằng Xdebug (14h30 Chiều)</h1>
+      <p class="slide-subtitle">Bình tĩnh bắt đúng bệnh chỉ trong 10 phút thay vì mò mẫm cả buổi chiều.</p>
+
+      <div class="grid-3" style="margin-top: 10px;">
+        <div class="box-card">
+          <div style="font-family: var(--font-mono); color: #f87171; font-weight: 700; font-size: 0.8rem; margin-bottom: 6px;">BƯỚC 1: SOI NETWORK</div>
+          <h4 class="card-heading">Bắt Request Lỗi 500</h4>
+          <p class="card-desc">Bật tab Network, bắt được API <code>/orders/cancel</code> bị lỗi đỏ 500 kèm payload gửi lên.</p>
+        </div>
+
+        <div class="box-card">
+          <div style="font-family: var(--font-mono); color: #a855f7; font-weight: 700; font-size: 0.8rem; margin-bottom: 6px;">BƯỚC 2: CẮM XDEBUG</div>
+          <h4 class="card-heading">Replay & Dừng Luồng</h4>
+          <p class="card-desc">Cắm Breakpoint tại Controller, Replay request từ trình duyệt. Xdebug khựng lại giữ chân luồng chạy.</p>
+        </div>
+
+        <div class="box-card">
+          <div style="font-family: var(--font-mono); color: #34d399; font-weight: 700; font-size: 0.8rem; margin-bottom: 6px;">BƯỚC 3: BẮT ĐÚNG BỆNH</div>
+          <h4 class="card-heading">Phát Hiện Null Pointer</h4>
+          <p class="card-desc">Biến <code>user_id</code> bị null ở dữ liệu cũ. Thêm kiểm tra an toàn <code>if/optional chaining</code> là fix dứt điểm!</p>
+        </div>
+      </div>
+
+      <div class="box-card" style="margin-top: 18px; border-left: 4px solid #a855f7;">
+        <strong style="color: #c084fc;">💡 Bài học rút ra:</strong>
+        <span style="font-size: 0.88rem; color: #cbd5e1; margin-left: 8px;">Có Xdebug soi tận mắt biến và Call Stack, em không bao giờ phải 'đoán mò rồi sửa đại' như thời sinh viên nữa.</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 14: Scenario 4 (Merge Conflict with Rebase) -->
+    <div class="slide" data-slide="14" data-notes="17h chiều: Chuẩn bị về thì tạo PR báo xung đột đỏ lòm. Không hoảng loạn bấm bừa trên web GitHub! Quy trình 5 bước: Về local pull code mới nhất của develop về. Checkout sang nhánh mình gõ git rebase develop. Mở VS Code so sánh từng đoạn: Đoạn trên của mình, đoạn dưới của bạn Tuấn. Chọn Accept Both để giữ cả hai. Gõ git add . rồi git rebase --continue. Chạy test lại thấy ngon lành thì push force-with-lease lên PR. Thông báo đỏ biến mất đổi thành xanh. Tắt máy về thảnh thơi!">
+      <span class="slide-eyebrow eyebrow-amber">⚔️ TÌNH HUỐNG THỰC TẾ 4</span>
+      <h1 class="slide-title">Kịch Bản 4: Hóa Giải Xung Đột Code Cuối Ngày (17h00 Chiều)</h1>
+      <p class="slide-subtitle">Quy trình giải quyết Merge Conflict bằng Git Rebase êm đẹp, không mất một dòng code.</p>
+
+      <div class="terminal-box" style="margin-top: 8px;">
+        <div class="terminal-topbar">
+          <span class="term-dot term-dot-r"></span>
+          <span class="term-dot term-dot-y"></span>
+          <span class="term-dot term-dot-g"></span>
+          <span class="term-title">git rebase conflict resolution workflow</span>
+        </div>
+        <div class="terminal-body">
+          <span class="term-comment"># Bước 1: Kéo code mới nhất của nhánh chính về</span><br>
+          <span class="term-cmd">git</span> checkout develop && <span class="term-cmd">git</span> pull origin develop<br><br>
+          <span class="term-comment"># Bước 2: Về nhánh của mình và chạy rebase</span><br>
+          <span class="term-cmd">git</span> checkout feature/ORDER-101-history<br>
+          <span class="term-cmd">git</span> rebase develop<br><br>
+          <span class="term-comment"># Bước 3: Mở VS Code chọn: Accept Current / Accept Incoming / Accept Both</span><br>
+          <span class="term-comment"># Bước 4: Đánh dấu đã giải quyết xong và tiếp tục rebase</span><br>
+          <span class="term-cmd">git</span> add .<br>
+          <span class="term-cmd">git</span> rebase --continue<br><br>
+          <span class="term-comment"># Bước 5: Đẩy code sạch lên lại Pull Request</span><br>
+          <span class="term-cmd">git</span> push --force-with-lease origin feature/ORDER-101-history<br>
+          <span class="term-success">✔ PR xanh trở lại, lịch sử commit thẳng tắp, sẵn sàng merge!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 15: Intern Mistakes vs Senior Mindset -->
+    <div class="slide" data-slide="15" data-notes="5 cái bẫy tâm lý khiến intern mãi không lớn lên được: 1 là giấu dốt ngồi mò 2 ngày hoặc 5 phút lại hỏi anh ơi lỗi gì. Áp dụng quy tắc 15-30 phút: Tự tìm hiểu trước, hỏi thì kèm công thức: Lỗi gì - Đã thử cách gì - Nghi ngờ ở đâu. 2 là sợ đọc log chữ đỏ, vội copy ném lên mạng. Bình tĩnh đọc dòng đầu tiên và tìm đúng file do mình viết. 3 là tiếp nhận Code Review: Bị Senior bắt sửa 10 chỗ đừng tự ái! Đó là khóa học 1 kèm 1 miễn phí giá trị nhất mà trường học không bao giờ có!">
+      <span class="slide-eyebrow eyebrow-rose">🧠 CHUYÊN ĐỀ 4: TƯ DUY NÂNG TẦM</span>
+      <h1 class="slide-title">5 Cái Bẫy Của Intern & Bộ Khung Tư Duy Senior</h1>
+      <p class="slide-subtitle">Những điểm mù tâm lý khiến người mới giậm chân tại chỗ và cách bứt phá.</p>
+
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Tình Huống</th>
+            <th>Thói Quen Của Intern / Junior Yếu</th>
+            <th>Tác Phong Chuẩn Senior</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>1. Khi gặp bế tắc (Stuck)</strong></td>
+            <td>Hoặc giấu dốt ngồi mò 2 ngày; hoặc cứ 5 phút lại quay sang hỏi anh ơi lỗi gì.</td>
+            <td><strong>Quy tắc 15–30 phút:</strong> Tự tra cứu trước. Khi hỏi phải kèm: <em>Lỗi gì - Đã thử cách gì - Nghi ngờ nguyên nhân ở đâu</em>.</td>
+          </tr>
+          <tr>
+            <td><strong>2. Đọc thông báo lỗi</strong></td>
+            <td>Hoảng sợ khi thấy chữ đỏ, nhìn lướt qua rồi vội vàng copy ném lên Google.</td>
+            <td>Bình tĩnh đọc dòng đầu của Stack Trace, tìm đúng file và dòng code do chính dự án mình viết để khoanh vùng.</td>
+          </tr>
+          <tr>
+            <td><strong>3. Khâu tự kiểm thử</strong></td>
+            <td>Chỉ test đúng 1 trường hợp hoàn hảo (Happy Path) là vội báo xong việc.</td>
+            <td>Luôn tự test các trường hợp biên: Chuỗi rỗng, số âm, mạng chập chờn, dữ liệu cực lớn, tài khoản không có quyền.</td>
+          </tr>
+          <tr>
+            <td><strong>4. Nhận phản hồi PR</strong></td>
+            <td>Tự ái, nghĩ rằng Senior đang bắt bẻ, khó chịu khi bị yêu cầu sửa code.</td>
+            <td>Coi Code Review là khóa học 1 kèm 1 miễn phí giá trị nhất để nâng trình độ; tiếp thu văn minh trên tinh thần kỹ thuật.</td>
+          </tr>
+          <tr>
+            <td><strong>5. Vệ sinh mã nguồn</strong></td>
+            <td>Để lại đầy <code>console.log</code>, code thừa comment, biến đặt tên <code>a, b, temp</code>.</td>
+            <td>Dọn sạch rác, chạy linter, format chuẩn, đặt tên biến có ngữ nghĩa rõ ràng trước khi bấm tạo Pull Request.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SLIDE 16: AI Antigravity Workflow -->
+    <div class="slide" data-slide="16" data-notes="Năm 2026 rồi, không biết dùng AI là tụt hậu. Nhưng dùng theo kiểu copy paste vào ChatGPT là bị đào thải còn nhanh hơn! Antigravity không phải chatbot thông thường, nó là AI Agent dành riêng cho kỹ sư. Nó hiểu toàn bộ codebase, tuân thủ nghiêm ngặt rules của công ty như TypeScript strict, Clean Code. Quy trình 5 bước: 1 Đưa spec vào brainstorming tìm edge cases. 2 Lập kế hoạch sửa file nào. 3 AI viết code tuân thủ rules. 4 Tự chạy linter kiểm chứng. 5 Tự sinh mô tả PR chuyên nghiệp. Năng suất của em sẽ gấp 3 lần người khác!">
+      <span class="slide-eyebrow eyebrow-indigo">🤖 CHUYÊN ĐỀ 5: ĐÒN BẨY NĂNG SUẤT</span>
+      <h1 class="slide-title">Đòn Bẩy X5 Năng Suất Với AI Antigravity</h1>
+      <p class="slide-subtitle">Chuyển từ Copy-Paste nghiệp dư sang Agentic Workflow chuyên nghiệp của Kỹ sư.</p>
+
+      <div class="grid-2">
+        <div class="box-card" style="border-left: 4px solid #f43f5e;">
+          <h3 class="card-heading">Cách Dùng AI Nghiệp Dư (Copy-Paste)</h3>
+          <p class="card-desc">Gặp bài toán ➔ Ném vào ChatGPT ➔ Copy code trả về dán bừa vào dự án mà không hiểu gì ➔ Sinh thêm 3 bug mới, phá vỡ kiến trúc có sẵn của công ty.</p>
+        </div>
+
+        <div class="box-card box-card-highlight" style="border-left: 4px solid #818cf8;">
+          <h3 class="card-heading">Agentic Workflow Cùng Antigravity AI</h3>
+          <p class="card-desc">AI có đầy đủ ngữ cảnh dự án, tuân thủ Workspace Rules (TypeScript strict, không dùng <code>any</code>) và hoạt động như một Pair Programmer cao cấp.</p>
+        </div>
+      </div>
+
+      <div class="box-card" style="margin-top: 14px;">
+        <div style="font-size: 0.84rem; font-weight: 700; color: #cbd5e1; margin-bottom: 10px;">QUY TRÌNH 5 BƯỚC GIẢI QUYẾT 1 TICKET CÙNG ANTIGRAVITY:</div>
+        <div style="display: flex; gap: 8px; justify-content: space-between; flex-wrap: wrap;">
+          <span class="badge-pill pill-blue">1. Phân tích Specs (/brainstorming)</span> ➔
+          <span class="badge-pill pill-blue">2. Lập Implementation Plan</span> ➔
+          <span class="badge-pill pill-green">3. Code chuẩn Rules</span> ➔
+          <span class="badge-pill pill-amber">4. Tự động Lint & Verify</span> ➔
+          <span class="badge-pill pill-green">5. Sinh PR Description</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 17: CV & STAR Interview -->
+    <div class="slide" data-slide="17" data-notes="Biến kiến thức thành việc làm và lương tốt: 90% CV sinh viên ngoài kia chỉ ghi chung chung 'làm web bán hàng clone trên YouTube', GitHub có đúng 1 commit nộp file zip. Hồ sơ của em có README hướng dẫn chạy Docker 1 dòng, commit chuẩn Conventional Commits, và đặc biệt ghi rõ kinh nghiệm xử lý lỗi N+1 Query: phát hiện và loại bỏ lỗi N+1 Query bằng kỹ thuật Eager Loading with() trong Laravel, giảm từ 51 câu query xuống 2 câu, rút ngắn thời gian phản hồi API danh mục từ 800ms xuống 70ms. Khi phỏng vấn hỏi gặp lỗi gì khó, em trả lời trôi chảy theo mô hình STAR: Bối cảnh trang danh mục 50 sản phẩm bị chậm 800ms dù ít dữ liệu, nhiệm vụ tìm nguyên nhân gốc rễ đưa về dưới 100ms, hành động dùng Laravel Telescope và Xdebug soi ra N+1 query và fix bằng Eager Loading with(), kết quả giảm 51 câu xuống 2 câu, tải trang chỉ còn 70ms. Người phỏng vấn nghe xong là biết ngay em đã làm thật và có tư duy chuẩn Junior!">
+      <span class="slide-eyebrow eyebrow-cyan">🎯 CHUYÊN ĐỀ 6: CHIẾN LƯỢC XIN VIỆC</span>
+      <h1 class="slide-title">Định Vị Chuẩn Junior: CV Khác Biệt & Phỏng Vấn STAR</h1>
+      <p class="slide-subtitle">Đè bẹp các ứng viên Fresher khác bằng tư duy thực chiến và kết quả đo lường được.</p>
+
+      <div class="grid-2">
+        <div class="box-card">
+          <h3 class="card-heading">GitHub Profile & CV Đè Bẹp Fresher</h3>
+          <ul class="card-desc" style="list-style-type: none; display: flex; flex-direction: column; gap: 8px; padding-left: 0; margin-top: 6px;">
+            <li>⭐ <strong>File README.md chuẩn:</strong> Có ảnh chụp, hướng dẫn bật app bằng <code>docker compose up -d</code>.</li>
+            <li>⭐ <strong>Lịch sử Git sạch:</strong> Tuân thủ <a href="https://www.conventionalcommits.org/en/v1.0.0/" target="_blank" rel="noopener noreferrer" style="color: #38bdf8; text-decoration: underline; font-weight: 700;">Conventional Commits ↗</a> (<code>feat:</code>, <code>fix:</code>, <code>refactor:</code>).</li>
+            <li>⭐ <strong>Dự án có số liệu thực tế:</strong> <em>"Phát hiện và loại bỏ lỗi N+1 Query bằng kỹ thuật Eager Loading (<code>with()</code>) trong Laravel, giảm từ 51 câu truy vấn xuống 2 câu SQL, rút ngắn 85% thời gian phản hồi API danh mục."</em></li>
+          </ul>
+        </div>
+
+        <div class="box-card box-card-highlight">
+          <h3 class="card-heading">Trả Lời Phỏng Vấn Theo Mô Hình STAR</h3>
+          <p class="card-desc" style="font-size: 0.8rem; margin-bottom: 6px;">Câu hỏi: <em>"Em đã từng gặp lỗi gì khó và giải quyết ra sao?"</em></p>
+          <div style="font-size: 0.8rem; display: flex; flex-direction: column; gap: 6px; color: #cbd5e1;">
+            <div><strong style="color: #38bdf8;">S (Bối cảnh):</strong> Trang danh mục 50 sản phẩm kèm tác giả/danh mục tải rất chậm (800ms) dù dữ liệu nhỏ.</div>
+            <div><strong style="color: #818cf8;">T (Nhiệm vụ):</strong> Tìm nguyên nhân gốc rễ (Root Cause) và tối ưu thời gian phản hồi API xuống dưới 100ms.</div>
+            <div><strong style="color: #fbbf24;">A (Hành động):</strong> Dùng Laravel Telescope & Xdebug bắt lỗi N+1 Query; refactor sang Eager Loading với <code>with(['category', 'author'])</code>.</div>
+            <div><strong style="color: #34d399;">R (Kết quả):</strong> Giảm từ 51 câu query thừa xuống đúng 2 câu SQL, thời gian tải trang giảm ngoạn mục còn 70ms!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 18: Action Plan 30 Days & Q&A -->
+    <div class="slide" data-slide="18" data-notes="Buổi chia sẻ 120 phút hôm nay cung cấp cho em một lượng kiến thức rất lớn. Nhưng nghe hay mà không làm thì sau 3 ngày sẽ quên sạch. Đây là lộ trình 30 ngày: Tuần 1 dọn dẹp máy, cài Docker, setup VS Code, Xdebug. Tuần 2 tự tạo xung đột Git và tự rebase giải quyết. Tuần 3 dùng Antigravity làm 1 tính năng từ đầu đến cuối. Tuần 4 tút lại CV theo chuẩn STAR và tự tin nộp đơn. Kiên trì 1 tháng tới, em sẽ tự tin bước vào bất kỳ công ty nào với phong thái của một Junior cứng! Giờ em có câu hỏi gì hãy hỏi anh sẽ giải đáp hết cho em!">
+      <span class="slide-eyebrow eyebrow-emerald">🚀 HÀNH ĐỘNG NGAY HÔM NAY</span>
+      <h1 class="slide-title">Kế Hoạch Hành Động 30 Ngày & Hỏi Đáp (Q&A)</h1>
+      <p class="slide-subtitle">Chuyển hóa toàn bộ kiến thức buổi học thành kỹ năng thực tế trên đôi bàn tay.</p>
+
+      <div class="grid-4" style="margin-top: 10px;">
+        <div class="box-card">
+          <div style="color: #818cf8; font-family: var(--font-mono); font-weight: 800; font-size: 1.1rem;">TUẦN 1</div>
+          <h4 class="card-heading" style="font-size: 0.9rem;">Chuẩn Hóa Máy</h4>
+          <p class="card-desc" style="font-size: 0.78rem;">Cài Docker Desktop, NVM, setup VS Code (Prettier, ESLint), cắm Xdebug vào PHP.</p>
+        </div>
+        <div class="box-card">
+          <div style="color: #38bdf8; font-family: var(--font-mono); font-weight: 800; font-size: 1.1rem;">TUẦN 2</div>
+          <h4 class="card-heading" style="font-size: 0.9rem;">Git Thực Chiến</h4>
+          <p class="card-desc" style="font-size: 0.78rem;">Tự tạo nhánh, tự tạo xung đột Merge Conflict và dùng <code>git rebase</code> giải quyết.</p>
+        </div>
+        <div class="box-card">
+          <div style="color: #34d399; font-family: var(--font-mono); font-weight: 800; font-size: 1.1rem;">TUẦN 3</div>
+          <h4 class="card-heading" style="font-size: 0.9rem;">Đòn Bẩy AI</h4>
+          <p class="card-desc" style="font-size: 0.78rem;">Ứng dụng quy trình 5 bước Antigravity AI để giải quyết trọn vẹn 1 tính năng từ specs đến PR.</p>
+        </div>
+        <div class="box-card">
+          <div style="color: #fbbf24; font-family: var(--font-mono); font-weight: 800; font-size: 1.1rem;">TUẦN 4</div>
+          <h4 class="card-heading" style="font-size: 0.9rem;">Tút CV & Nộp Đơn</h4>
+          <p class="card-desc" style="font-size: 0.78rem;">Đóng gói dự án theo chuẩn STAR, đính kèm link GitHub chỉn chu và tự tin ứng tuyển.</p>
+        </div>
+      </div>
+
+      <div class="box-card box-card-highlight" style="margin-top: 20px; text-align: center; padding: 24px;">
+        <h2 style="color: #ffffff; margin-bottom: 8px;">💬 PHẦN HỎI & ĐÁP (Q&A)</h2>
+        <p style="color: #94a3b8; font-size: 0.95rem;">Hãy đặt bất kỳ câu hỏi nào về những phần em còn chưa rõ. Chúc em vững bước trên con đường Kỹ sư!</p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Speaker Notes Drawer -->
+  <aside id="notes-drawer">
+    <div class="notes-header">
+      <div class="notes-title">
+        <span>🎙️</span>
+        <span>KỊCH BẢN NGƯỜI NÓI (SPEAKER SCRIPT)</span>
+      </div>
+      <button class="btn-action" id="btn-close-notes" style="padding: 4px 8px;">✕</button>
+    </div>
+    <span class="notes-tag" id="notes-slide-tag">SLIDE 01</span>
+    <div class="notes-content" id="notes-body">
+      <!-- Script will be injected via JS -->
+    </div>
+  </aside>
+
+  <!-- Footer Navigation -->
+  <footer>
+    <div class="nav-hints">
+      <span>Điều khiển:</span>
+      <span><span class="kbd">◀</span> <span class="kbd">▶</span> hoặc <span class="kbd">Space</span> để chuyển slide</span>
+      <span><span class="kbd">S</span> Bật lời thoại</span>
+      <span><span class="kbd">F</span> Toàn màn hình</span>
+      <span><span class="kbd">Ctrl+P</span> Xuất PDF</span>
+    </div>
+    <div>
+      <span>Bản quyền Đào Tạo Nội Bộ • 2026</span>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      const slides = document.querySelectorAll('.slide');
+      const progressBar = document.getElementById('progress-bar');
+      const slideNumDisplay = document.getElementById('slide-num');
+      const btnPrev = document.getElementById('btn-prev');
+      const btnNext = document.getElementById('btn-next');
+      const btnNotes = document.getElementById('btn-notes');
+      const btnCloseNotes = document.getElementById('btn-close-notes');
+      const btnFullscreen = document.getElementById('btn-fullscreen');
+      const notesDrawer = document.getElementById('notes-drawer');
+      const notesBody = document.getElementById('notes-body');
+      const notesSlideTag = document.getElementById('notes-slide-tag');
+
+      let currentSlide = 0;
+      const totalSlides = slides.length;
+
+      function updateSlide(index) {
+        if (index < 0) index = 0;
+        if (index >= totalSlides) index = totalSlides - 1;
+        currentSlide = index;
+
+        slides.forEach((slide, i) => {
+          slide.classList.toggle('active', i === currentSlide);
+        });
+
+        // Update progress bar
+        const progress = ((currentSlide + 1) / totalSlides) * 100;
+        progressBar.style.width = progress + '%';
+
+        // Update counter
+        const currentStr = String(currentSlide + 1).padStart(2, '0');
+        const totalStr = String(totalSlides).padStart(2, '0');
+        slideNumDisplay.textContent = `${currentStr} / ${totalStr}`;
+
+        // Update notes
+        const activeSlideElem = slides[currentSlide];
+        const notesText = activeSlideElem.getAttribute('data-notes') || 'Chưa có ghi chú cho slide này.';
+        notesSlideTag.textContent = `SLIDE ${currentStr} / ${totalStr}`;
+        notesBody.innerHTML = `<blockquote>"${notesText}"</blockquote>`;
+      }
+
+      function nextSlide() {
+        if (currentSlide < totalSlides - 1) {
+          updateSlide(currentSlide + 1);
+        }
+      }
+
+      function prevSlide() {
+        if (currentSlide > 0) {
+          updateSlide(currentSlide - 1);
+        }
+      }
+
+      function toggleNotes() {
+        notesDrawer.classList.toggle('open');
+        btnNotes.classList.toggle('active', notesDrawer.classList.contains('open'));
+      }
+
+      function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(err => {
+            console.error('Error attempting to enable fullscreen:', err);
+          });
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          }
+        }
+      }
+
+      // Event listeners
+      btnNext.addEventListener('click', nextSlide);
+      btnPrev.addEventListener('click', prevSlide);
+      btnNotes.addEventListener('click', toggleNotes);
+      btnCloseNotes.addEventListener('click', toggleNotes);
+      btnFullscreen.addEventListener('click', toggleFullscreen);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+          e.preventDefault();
+          nextSlide();
+        } else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
+          e.preventDefault();
+          prevSlide();
+        } else if (e.key === 's' || e.key === 'S') {
+          e.preventDefault();
+          toggleNotes();
+        } else if (e.key === 'f' || e.key === 'F') {
+          e.preventDefault();
+          toggleFullscreen();
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          updateSlide(0);
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          updateSlide(totalSlides - 1);
+        }
+      });
+
+      // Initialize first slide
+      updateSlide(0);
+    })();
+  </script>
+</body>
+</html>

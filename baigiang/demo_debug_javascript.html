@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thực Nghiệm Thực Chiến: console.log() vs Chrome DevTools Debugger</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #090d16;
+      --bg-card: rgba(18, 24, 38, 0.9);
+      --bg-card-hover: rgba(28, 38, 58, 0.95);
+      --border-card: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(99, 102, 241, 0.35);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --accent-indigo: #6366f1;
+      --accent-cyan: #06b6d4;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --accent-purple: #a855f7;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      padding: 24px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border-card);
+      padding-bottom: 20px;
+      margin-bottom: 28px;
+    }
+
+    .badge-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border: 1px solid var(--border-accent);
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+    h1 span {
+      background: linear-gradient(90deg, #818cf8, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Cheat sheet bar */
+    .cheatsheet-bar {
+      background: rgba(99, 102, 241, 0.08);
+      border: 1px solid var(--border-accent);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .cheat-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+    }
+    .kbd {
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: #38bdf8;
+      font-size: 0.8rem;
+      box-shadow: 0 2px 0 rgba(0,0,0,0.4);
+    }
+
+    /* Grid layout for scenarios */
+    .scenarios-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(560px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      border-color: rgba(99, 102, 241, 0.4);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+    }
+    .badge-loop { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-event { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+    .badge-async { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.3); }
+    .badge-network { background: rgba(6, 182, 212, 0.15); color: #38bdf8; border: 1px solid rgba(6, 182, 212, 0.3); }
+
+    .card-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* Versus comparison box inside cards */
+    .versus-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      background: #0b0f19;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.82rem;
+    }
+    .vs-left { border-right: 1px solid rgba(255, 255, 255, 0.08); padding-right: 12px; }
+    .vs-right { padding-left: 4px; }
+    .vs-title-red { color: #f87171; font-weight: 700; margin-bottom: 4px; }
+    .vs-title-green { color: #34d399; font-weight: 700; margin-bottom: 4px; }
+
+    /* Action buttons */
+    .button-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button {
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 9px 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .btn-console {
+      background: #1e293b;
+      color: #94a3b8;
+      border: 1px solid #334155;
+    }
+    .btn-console:hover {
+      background: #334155;
+      color: #ffffff;
+    }
+    .btn-devtools {
+      background: linear-gradient(135deg, #4f46e5, #0ea5e9);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+    .btn-devtools:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+    .btn-danger:hover {
+      background: #ef4444;
+      color: #ffffff;
+    }
+
+    /* Result log output inside UI */
+    .output-box {
+      background: #070a12;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: #cbd5e1;
+      min-height: 50px;
+      max-height: 120px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    .output-prompt {
+      color: #64748b;
+      margin-bottom: 4px;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Form inside kịch bản 4 */
+    .mini-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      background: rgba(0,0,0,0.25);
+      padding: 12px;
+      border-radius: 8px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .form-group label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .form-group input {
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: #f8fafc;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--accent-indigo);
+    }
+
+    /* Instructor Guide Panel */
+    .instructor-guide {
+      background: rgba(16, 185, 129, 0.06);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-top: 32px;
+      font-size: 0.88rem;
+    }
+    .instructor-guide h3 {
+      color: #34d399;
+      font-size: 1rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .instructor-guide ol {
+      padding-left: 20px;
+      color: #cbd5e1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <span class="badge-tag">Developer Masterclass • Lab Thực Hành</span>
+      <h1>Bóc Mẽ Sự Khác Biệt: <span>console.log() vs DevTools Debugger</span></h1>
+      <p class="subtitle">Trang web thực nghiệm tương tác giúp Mentor thị phạm sự vượt trội của Breakpoints, Scope, Call Stack và Network tab.</p>
+    </header>
+
+    <!-- Top Cheat Sheet Bar -->
+    <div class="cheatsheet-bar">
+      <div style="font-weight: 700; color: #ffffff; font-size: 0.9rem;">
+        ⚡ PHÍM TẮT DEBUG CHROME (<span class="kbd">F12</span> mở DevTools):
+      </div>
+      <div class="cheat-item"><span class="kbd">F8</span> Tiếp tục chạy (Resume)</div>
+      <div class="cheat-item"><span class="kbd">F10</span> Bước qua dòng tiếp (Step Over)</div>
+      <div class="cheat-item"><span class="kbd">F11</span> Đi sâu vào trong hàm (Step Into)</div>
+      <div class="cheat-item"><span class="kbd">Shift+F11</span> Nhảy ra khỏi hàm (Step Out)</div>
+    </div>
+
+    <!-- Scenarios Grid -->
+    <div class="scenarios-grid">
+
+      <!-- SCENARIO 1: LOOP OF 100 ITEMS (Conditional Breakpoint & Pause on Exceptions) -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>🛒 1. Vòng Lặp 100 Món (Tổng Ra NaN - Không Biết Món Nào Bị Lỗi)</span>
+          </div>
+          <span class="card-badge badge-loop">CONDITIONAL BREAKPOINT</span>
+        </div>
+
+        <p class="card-desc">
+          Mảng có 100 sản phẩm, kết quả tính tổng ra <code>NaN</code>. <strong>Lập trình viên hoàn toàn CHƯA BIẾT món số mấy bị lỗi!</strong> (Ta không phải thầy bói để đoán trước <code>id === 77</code>).
+        </p>
+
+        <div class="versus-box">
+          <div class="vs-left">
+            <div class="vs-title-red">❌ Thói quen console.log</div>
+            Gõ <code>console.log(item)</code> ➔ Xả lũ 100 dòng rác vào Console! Phải cuộn chuột mỏi tay soi từng object để tìm món nào có giá trị dị tật.
+          </div>
+          <div class="vs-right">
+            <div class="vs-title-green">✔️ Đỉnh cao DevTools (Bắt theo biểu hiện lỗi)</div>
+            Chuột phải dòng tính tiền đặt Conditional Breakpoint theo trạng thái lỗi:<br>
+            <code style="color:#38bdf8;">typeof item.price !== 'number' || isNaN(item.price)</code><br>
+            ➔ Trình duyệt tự lướt qua 99 món chuẩn và <strong>phanh gấp đúng món gây lỗi</strong>! Soi tab Scope mới biết: à, hóa ra là <code>id: 77</code>!
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button class="btn-console" onclick="runScenario1_ConsoleLog()">
+            <span>📜 1. Chạy console.log (Ngập 100 dòng rác)</span>
+          </button>
+          <button class="btn-devtools" onclick="runScenario1_DevTools()">
+            <span>🎯 2. Bắt Lỗi Bằng Conditional Breakpoint</span>
+          </button>
+          <button class="btn-danger" onclick="runScenario1_ExceptionCrash()">
+            <span>💥 3. Thử 'Pause on Exceptions' (Bắt Lỗi Crash)</span>
+          </button>
+        </div>
+
+        <div>
+          <div class="output-prompt">Màn hình kết quả:</div>
+          <div class="output-box" id="output-s1">Bấm nút để chạy tính toán...</div>
+        </div>
+      </div>
+
+      <!-- SCENARIO 2: EVENT LISTENER BREAKPOINTS -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>🔍 2. Chiếc Nút Bấm Ẩn Danh Trong 500 File</span>
+          </div>
+          <span class="card-badge badge-event">EVENT BREAKPOINTS</span>
+        </div>
+
+        <p class="card-desc">
+          Sếp giao em sửa lỗi nút bấm "Hủy Đơn Hàng". Dự án lớn có 500 file JS, em hoàn toàn <strong>không biết hàm xử lý nút này nằm ở file nào, dòng bao nhiêu!</strong>
+        </p>
+
+        <div class="versus-box">
+          <div class="vs-left">
+            <div class="vs-title-red">❌ Cách dùng console.log</div>
+            Bất lực! Không biết hàm nằm ở đâu thì biết gõ <code>console.log()</code> vào chỗ nào? Phải ngồi search text mò mẫm cả buổi sáng.
+          </div>
+          <div class="vs-right">
+            <div class="vs-title-green">✔️ Cách dùng DevTools</div>
+            Mở tab <strong>Sources</strong> ➔ Bảng bên phải: <strong>Event Listener Breakpoints</strong> ➔ Mở <strong>Mouse</strong> ➔ Tích chọn <strong>click</strong>. Bấm nút là DevTools tự trỏ đến đúng dòng code!
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button class="btn-danger" id="btn-mystery-cancel">
+            <span>🚨 Hủy Đơn Hàng #DH-8899 (Bấm vào để bắt)</span>
+          </button>
+        </div>
+
+        <div>
+          <div class="output-prompt">Trạng thái hệ thống:</div>
+          <div class="output-box" id="output-s2">Đơn hàng #DH-8899: Đang chờ giao dịch...</div>
+        </div>
+      </div>
+
+      <!-- SCENARIO 3: ASYNC MUTATION TRAP -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>🐛 3. Bẫy Biến Tham Chiếu (Asynchronous Mutation)</span>
+          </div>
+          <span class="card-badge badge-async">REFERENCE TRAP</span>
+        </div>
+
+        <p class="card-desc">
+          Tạo object <code>user = { name: "An", role: "guest" }</code>. In ra bằng <code>console.log(user)</code>. 1 giây sau, một tác vụ ngầm sửa <code>user.role = "admin"</code>.
+        </p>
+
+        <div class="versus-box">
+          <div class="vs-left">
+            <div class="vs-title-red">❌ Lừa dối của console.log</div>
+            Khi em bấm mũi tên mở rộng object trên tab Console, em thấy <code>role: "admin"</code> dù lúc log là <code>"guest"</code>! Vì console.log đọc tham chiếu sống trong RAM khi mở rộng.
+          </div>
+          <div class="vs-right">
+            <div class="vs-title-green">✔️ Sự thật với Breakpoint</div>
+            Breakpoint dừng thời gian ngay tại dòng khởi tạo. Bảng <strong>Scope</strong> hiển thị 100% sự thật bất biến tại khoảnh khắc đó: <code>role: "guest"</code>.
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button class="btn-console" onclick="runScenario3_AsyncTrap()">
+            <span>🧪 Kích Hoạt Bẫy Tham Chiếu</span>
+          </button>
+        </div>
+
+        <div>
+          <div class="output-prompt">Màn hình kết quả:</div>
+          <div class="output-box" id="output-s3">Bấm nút để kích hoạt... Mở tab Console (F12) để xem điều kỳ lạ!</div>
+        </div>
+      </div>
+
+      <!-- SCENARIO 4: ON-THE-FLY MUTATION & NETWORK REPLAY -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <span>⚡ 4. Sửa Biến Trong RAM & Replay XHR</span>
+          </div>
+          <span class="card-badge badge-network">NETWORK & RAM MUTATION</span>
+        </div>
+
+        <p class="card-desc">
+          Điền form gửi API. Khi có lỗi 400 hoặc muốn thử đổi giảm giá: <strong>Không cần reload trang hay điền lại form!</strong>
+        </p>
+
+        <div class="mini-form">
+          <div class="form-group">
+            <label>Tên Khách Hàng:</label>
+            <input type="text" id="cust-name" value="Nguyễn Văn An">
+          </div>
+          <div class="form-group">
+            <label>Mã Giảm Giá (Đang lỗi):</label>
+            <input type="text" id="cust-coupon" value="DISCOUNT_ERROR">
+          </div>
+          <div class="form-group">
+            <label>Giá Gốc (VNĐ):</label>
+            <input type="number" id="cust-price" value="500000">
+          </div>
+          <div class="form-group">
+            <label>Phí Ship (VNĐ):</label>
+            <input type="number" id="cust-ship" value="30000">
+          </div>
+        </div>
+
+        <div class="versus-box">
+          <div class="vs-left">
+            <div class="vs-title-red">❌ Cách dùng console.log</div>
+            Gửi lỗi phải F5 tải lại trang ➔ Toàn bộ form bị trắng trơn ➔ Lại phải ngồi gõ lại họ tên, mã giảm giá từng ô từ đầu!
+          </div>
+          <div class="vs-right">
+            <div class="vs-title-green">✔️ Tuyệt chiêu DevTools</div>
+            1. Mở tab Network ➔ Chuột phải request chọn <strong>Replay XHR</strong> bắn lại ngay trong 0.05s.<br>
+            2. Cắm breakpoint trong hàm tính toán ➔ Mở Console gõ đè biến trong RAM!
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button class="btn-devtools" onclick="runScenario4_CalculateAndSend()">
+            <span>🚀 Tính Tiền & Bắn API (Postman Echo)</span>
+          </button>
+        </div>
+
+        <div>
+          <div class="output-prompt">Kết quả phản hồi:</div>
+          <div class="output-box" id="output-s4">Chưa có request...</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Instructor Guide Panel -->
+    <div class="instructor-guide">
+      <h3>👨‍🏫 HƯỚNG DẪN DÀNH CHO MENTOR KHI THỊ PHẠM TRÊN GOOGLE MEET</h3>
+      <ol>
+        <li><strong>Bước 1:</strong> Mở trang web này trên Chrome, bấm phím <span class="kbd">F12</span> mở sẵn DevTools và share toàn màn hình.</li>
+        <li><strong>Bước 2 (Thị phạm Kịch bản 1 - Bắt lỗi không cần đoán ID):</strong>
+          <br>• <em>Cách 1 (console.log):</em> Bấm nút 1, mở Console chỉ cho học viên thấy 100 dòng log ngập lụa, phải cuộn tìm to mắt.
+          <br>• <em>Cách 2 (Conditional Breakpoint theo biểu thức lỗi):</em> Mở tab <strong>Sources</strong> ➔ Mở file <code>demo_debug_javascript.html</code> ➔ Tìm hàm <code>runScenario1_DevTools</code> ➔ Chuột phải dòng <code>totalAmount += item.price;</code> chọn <strong>Add conditional breakpoint</strong> ➔ Gõ điều kiện bắt lỗi: <code style="color: #38bdf8;">typeof item.price !== 'number' || isNaN(item.price)</code>. Quay lại web bấm nút 2. Trình duyệt lướt qua 99 món chuẩn và <strong>phanh gấp đúng món bị lỗi</strong>! Lúc này nhìn sang bảng <strong>Scope</strong> mới vỡ lẽ: <code>id = 77</code>, <code>price = "chưa_cập_nhật"</code>!
+          <br>• <em>Cách 3 (Pause on Exceptions):</em> Trong tab Sources, bấm bật icon tròn <strong>Pause on exceptions</strong> (màu tím/xanh). Bấm nút 3 <em>"Thử Pause on Exceptions"</em> ➔ Trình duyệt tự phanh khựng ngay tại dòng gây crash mà không cần đặt trước bất kỳ breakpoint nào!</li>
+        <li><strong>Bước 3 (Thị phạm Kịch bản 2):</strong> Vào tab <strong>Sources</strong> ➔ Mở rộng bảng <strong>Event Listener Breakpoints</strong> ở cột phải ➔ Tích chọn <strong>Mouse -> click</strong>. Quay lại web bấm nút đỏ <em>"Hủy Đơn Hàng"</em>. DevTools tự nhảy vèo đến dòng bắt sự kiện mà không cần đi tìm file!</li>
+        <li><strong>Bước 4 (Thị phạm Kịch bản 4):</strong> Mở tab <strong>Network</strong> lọc <code>Fetch/XHR</code>. Bấm nút <em>"Tính Tiền & Bắn API"</em>. Chuột phải vào dòng request <code>post</code> vừa gửi chọn <strong>Replay XHR</strong> để học viên thấy request được bắn lại tức thì mà không cần gõ lại form.</li>
+      </ol>
+    </div>
+
+  </div>
+
+  <!-- JAVASCRIPT LOGIC DÀNH CHO THỰC NGHIỆM -->
+  <script>
+    // ==========================================
+    // KỊCH BẢN 1: VÒNG LẶP 100 SẢN PHẨM (LỖI TẠI MÓN 77)
+    // ==========================================
+    const sampleProducts = Array.from({ length: 100 }, (_, index) => {
+      const id = index + 1;
+      // Món thứ 77 bị lỗi dữ liệu bẩn
+      if (id === 77) {
+        return { id: id, name: `Sản phẩm cao cấp #${id}`, price: "chưa_cập_nhật" };
+      }
+      return { id: id, name: `Sản phẩm #${id}`, price: 10000 + id * 500 };
+    });
+
+    // Cách 1: Dùng console.log thông thường
+    function runScenario1_ConsoleLog() {
+      const out = document.getElementById('output-s1');
+      out.textContent = "Đang chạy console.log... Hãy mở tab Console (F12) để xem 100 dòng log ngập màn hình!\n";
+      
+      let totalAmount = 0;
+      for (let i = 0; i < sampleProducts.length; i++) {
+        const item = sampleProducts[i];
+        console.log(`[Item #${item.id}] Giá:`, item.price); // Xả lũ 100 dòng vào console
+        totalAmount += item.price;
+      }
+      
+      out.textContent += `❌ KẾT QUẢ CUỐI CÙNG BỊ LỖI: ${totalAmount} (Do cộng chuỗi với số tại món 77)`;
+    }
+
+    // Cách 2: Dành cho DevTools Breakpoint (Bắt theo biểu thức lỗi, KHÔNG đoán trước ID)
+    function runScenario1_DevTools() {
+      const out = document.getElementById('output-s1');
+      out.textContent = "Đang tính toán với DevTools Breakpoint...\n";
+
+      let totalAmount = 0;
+      for (let i = 0; i < sampleProducts.length; i++) {
+        const item = sampleProducts[i];
+        
+        // >>> MENTOR ĐẶT CONDITIONAL BREAKPOINT TẠI ĐÂY: typeof item.price !== 'number' || isNaN(item.price) <<<
+        totalAmount += item.price; 
+      }
+
+      out.textContent += `Tổng tiền tính được: ${totalAmount}`;
+    }
+
+    // Cách 3: Demo Pause on Exceptions (Trình duyệt tự phanh khi gặp ngoại lệ)
+    function runScenario1_ExceptionCrash() {
+      const out = document.getElementById('output-s1');
+      out.textContent = "Đang chạy vòng lặp có phần tử bị null gây crash...\n";
+      out.textContent += "👉 Nếu Mentor đã bật icon 'Pause on exceptions' (F8 / Ctrl+\\), Chrome sẽ tự phanh gấp ngay tại dòng lỗi bên dưới!\n";
+
+      const brokenList = [
+        { id: 1, name: "Áo sơ mi", price: 150000 },
+        { id: 2, name: "Quần jean", price: 250000 },
+        null, // Món này bị null do server trả lỗi ngầm
+        { id: 4, name: "Giày sneaker", price: 500000 }
+      ];
+
+      let total = 0;
+      for (let i = 0; i < brokenList.length; i++) {
+        const item = brokenList[i];
+        // Dòng này sẽ ném Uncaught TypeError: Cannot read properties of null (reading 'price')
+        total += item.price;
+      }
+
+      out.textContent += `Tổng: ${total}`;
+    }
+
+    // ==========================================
+    // KỊCH BẢN 2: EVENT LISTENER BREAKPOINTS (NÚT ẨN DANH)
+    // ==========================================
+    // Giả lập hàm xử lý sự kiện nằm sâu trong mã nguồn
+    (function registerSecretOrderHandlers() {
+      const cancelBtn = document.getElementById('btn-mystery-cancel');
+      if (!cancelBtn) return;
+
+      cancelBtn.addEventListener('click', function handleSecretOrderCancellation(event) {
+        // >>> ĐÂY LÀ DÒNG CODE DEVTOOLS SẼ TỰ ĐỘNG BẮT KHI BẬT Event Listener Breakpoints -> Mouse -> click <<<
+        const out = document.getElementById('output-s2');
+        const confirmed = confirm("Bạn có chắc chắn muốn hủy đơn hàng #DH-8899 không?");
+        
+        if (confirmed) {
+          out.textContent = "🚨 ĐÃ HỦY THÀNH CÔNG: Đơn hàng #DH-8899 đã bị xóa khỏi hệ thống lúc " + new Date().toLocaleTimeString();
+          out.style.color = "#f87171";
+        } else {
+          out.textContent = "Đã hủy thao tác. Đơn hàng #DH-8899 vẫn an toàn.";
+          out.style.color = "#34d399";
+        }
+      });
+    })();
+
+    // ==========================================
+    // KỊCH BẢN 3: BẪY BIẾN THAM CHIẾU BẤT ĐỒNG BỘ
+    // ==========================================
+    function runScenario3_AsyncTrap() {
+      const out = document.getElementById('output-s3');
+      out.textContent = "1. Đã khởi tạo: user = { name: 'An', role: 'guest' }\n";
+      out.textContent += "2. Đã gọi console.log(user)...\n";
+      out.textContent += "3. Tác vụ ngầm (setTimeout) đang chạy trong 1 giây để sửa role thành 'admin'...\n\n";
+
+      const user = { name: "An", role: "guest" };
+
+      // In ra console lúc này role là 'guest'
+      console.log("👉 [console.log tại dòng 524] Đối tượng user ban đầu:", user);
+
+      // Tác vụ bất đồng bộ sửa đổi dữ liệu sau 1 giây
+      setTimeout(() => {
+        user.role = "admin"; // Đổi dữ liệu
+        console.log("⚡ [Sau 1 giây] Dữ liệu đã bị sửa ngầm thành:", user);
+        out.textContent += "💥 BÂY GIỜ HÃY MỞ CONSOLE: Bấm vào mũi tên tam giác để mở rộng log đầu tiên.\n";
+        out.textContent += "👉 Em sẽ thấy role hiển thị là 'admin' chứ không phải 'guest'! Đó là vì console.log đọc tham chiếu sống tại thời điểm em click chuột mở xem.";
+      }, 1000);
+    }
+
+    // ==========================================
+    // KỊCH BẢN 4: SỬA BIẾN TRONG RAM & REPLAY XHR
+    // ==========================================
+    function calculateDiscountFormula(couponCode, originalPrice) {
+      // Giả sử có logic tính toán phức tạp
+      if (couponCode === "DISCOUNT_ERROR") {
+        return -50000; // Lỗi logic trả về số âm
+      }
+      return 50000;
+    }
+
+    function runScenario4_CalculateAndSend() {
+      const name = document.getElementById('cust-name').value;
+      const coupon = document.getElementById('cust-coupon').value;
+      const price = parseFloat(document.getElementById('cust-price').value) || 0;
+      const ship = parseFloat(document.getElementById('cust-ship').value) || 0;
+      const out = document.getElementById('output-s4');
+
+      out.textContent = "Đang tính toán giá trị đơn hàng...\n";
+
+      // >>> MENTOR ĐẶT BREAKPOINT TẠI DÒNG DƯỚI ĐÂY ĐỂ DEMO SỬA BIẾN discount TRỰC TIẾP TRONG CONSOLE <<<
+      let discountAmount = calculateDiscountFormula(coupon, price);
+      let finalTotal = price - discountAmount + ship;
+
+      out.textContent += `• Giá gốc: ${price.toLocaleString('vi-VN')} đ\n`;
+      out.textContent += `• Giảm giá: ${discountAmount.toLocaleString('vi-VN')} đ\n`;
+      out.textContent += `• Tổng thanh toán: ${finalTotal.toLocaleString('vi-VN')} đ\n\n`;
+      out.textContent += "Đang bắn API lên Postman Echo Sandbox (Xem tab Network)...";
+
+      // Bắn request API thật sang Postman Echo
+      fetch('https://postman-echo.com/post', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          customer_name: name,
+          coupon_code: coupon,
+          discount: discountAmount,
+          final_amount: finalTotal,
+          timestamp: new Date().toISOString()
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        out.textContent += "\n✔️ GỬI THÀNH CÔNG! Máy chủ Postman Echo đã phản hồi 200 OK.\n";
+        out.textContent += "👉 Giờ hãy vào tab Network: Chuột phải vào request 'post' chọn 'Replay XHR' để thấy nó tự động bắn lại!";
+      })
+      .catch(err => {
+        out.textContent += "\n❌ Lỗi gửi API: " + err.message;
+      });
+    }
+  </script>
+</body>
+</html>
